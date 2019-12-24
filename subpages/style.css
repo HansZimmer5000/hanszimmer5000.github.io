@@ -1,15 +1,8 @@
 body {
     text-align: center;
     background-color: rgb(83, 83, 83);
-    line-height: 1;
     font-family: arial;
     color: white;
-}
-
-h1 {
-    font-size: calc(36px + 1vw);
-    font-weight: normal;
-    margin-bottom: 0px;
 }
 
 h2 {
@@ -43,20 +36,24 @@ a:hover {
 }
 
 .head {
-    padding: 10px;
+    padding-top: 20px;
+    padding-bottom: 1px;
     background: rgb(125, 156, 122);
     height: auto;
 }
 
 .headleft {
-    width: 20%;
+    text-align: right;
     float: none;
     display: inline-block;
 }
 
 .headright {
+    padding-left: 7px;
+    font-size: calc(36px + 1vw);
+    font-weight: normal;
+    text-align: left;
     float: none;
-    width: 55%;
     display: inline-block;
 }
 
@@ -68,6 +65,13 @@ a:hover {
 
 .profilepicture {
     width: 100%;
-    max-width: 200px;
-    max-height: 200px;
+    max-width: 130px;
+    max-height: 130px;
+    min-width: 75px;
+    min-height: 75px;
+}
+
+.occupation {
+    padding-top: 5px;
+    font-size: calc(12px + 1vw);
 }
