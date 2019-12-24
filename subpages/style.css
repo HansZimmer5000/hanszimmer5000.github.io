@@ -11,7 +11,8 @@ h2 {
 }
 
 article {
-    padding-inline: 10%;
+    padding-left: 10%;
+    padding-right: 10%;
 }
 
 .articlehead {
