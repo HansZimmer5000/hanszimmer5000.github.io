@@ -7,14 +7,18 @@ body {
 }
 
 h1 {
-    font-size: 5vw;
+    font-size: calc(36px + 1vw);
     font-weight: normal;
-    margin-bottom: 12px;
+    margin-bottom: 0px;
 }
 
 h2 {
-    font-size: 4vw;
+    font-size: calc(25px + 1vw);
     font-weight: normal
+}
+
+.articlehead {
+    font-size: calc(18px + 1vw);
 }
 
 .articletext {
@@ -36,9 +40,6 @@ a:hover {
 .head {
     padding: 10px;
     background: rgb(125, 156, 122);
-    /*width: auto;
-    display: inline-block;
-    block-size: auto;*/
     height: auto;
 }
 
@@ -50,7 +51,7 @@ a:hover {
 
 .headright {
     float: none;
-    width: 75%;
+    width: 55%;
     display: inline-block;
 }
 
