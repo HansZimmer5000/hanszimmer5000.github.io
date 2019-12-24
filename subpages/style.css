@@ -17,6 +17,10 @@ h2 {
     font-weight: normal
 }
 
+.articletext {
+    text-align: left;
+}
+
 address {
     padding: 10px;
 }
