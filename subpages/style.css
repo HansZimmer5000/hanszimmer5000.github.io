@@ -24,6 +24,9 @@ header {
 
 footer {
     padding: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 address {
@@ -41,4 +44,14 @@ footer {
 
 a {
     color: rgb(255, 255, 255);
+}
+
+.left {
+    float: left;
+    width: 30%;
+}
+
+.right {
+    float: left;
+    width: 70%;
 }
