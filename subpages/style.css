@@ -17,8 +17,13 @@ h2 {
     font-weight: normal
 }
 
+article {
+    padding-inline: 10%;
+}
+
 .articlehead {
     font-size: calc(18px + 1vw);
+    font-weight: normal;
 }
 
 .articletext {
@@ -63,6 +68,6 @@ a:hover {
 
 .profilepicture {
     width: 100%;
-    max-width: 300px;
-    max-height: 300px;
+    max-width: 200px;
+    max-height: 200px;
 }
