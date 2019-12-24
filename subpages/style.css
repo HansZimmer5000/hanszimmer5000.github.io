@@ -17,41 +17,47 @@ h2 {
     font-weight: normal
 }
 
-header {
-    padding: 20px;
-    background: #AEC6CF;
-}
-
-footer {
-    padding: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
 address {
-    padding: 20px;
-}
-
-section {
-    padding: 20px;
-}
-
-footer {
-    background: rgb(125, 156, 122);
-    text-align: right;
+    padding: 10px;
 }
 
 a {
     color: rgb(255, 255, 255);
 }
 
-.left {
-    float: left;
-    width: 30%;
+a:hover {
+    color: rgb(196, 196, 196);
 }
 
-.right {
-    float: left;
-    width: 70%;
+.head {
+    padding: 10px;
+    background: rgb(125, 156, 122);
+    /*width: auto;
+    display: inline-block;
+    block-size: auto;*/
+    height: auto;
+}
+
+.headleft {
+    width: 20%;
+    float: none;
+    display: inline-block;
+}
+
+.headright {
+    float: none;
+    width: 75%;
+    display: inline-block;
+}
+
+.taskbar {
+    width: auto;
+    padding: 2px;
+    background: rgb(50, 137, 139);
+}
+
+.profilepicture {
+    width: 100%;
+    max-width: 300px;
+    max-height: 300px;
 }
