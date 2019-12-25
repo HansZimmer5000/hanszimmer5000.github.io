@@ -76,3 +76,18 @@ a:hover {
     padding-top: 5px;
     font-size: calc(12px + 1vw);
 }
+
+.footerbar {
+    height: 100px;
+}
+
+.impressumfooter {
+    text-align: right;
+    background: burlywood;
+    padding: 1px;
+}
+
+.impressumlink {
+    padding-right: 5px;
+    color: black;
+}
