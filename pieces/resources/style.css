@@ -91,3 +91,49 @@ a:hover {
     padding-right: 5px;
     color: black;
 }
+
+.centerTable {
+    border-collapse: collapse;
+    border-spacing: 0;
+    margin: 0px auto;
+}
+
+.centerTable th {
+    font-size: 15px;
+    padding: 10px 10px;
+    overflow: hidden;
+    word-break: normal;
+    text-align: right;
+}
+
+.centerTable td {
+    font-size: 15px;
+    padding: 10px 10px;
+    overflow: hidden;
+    word-break: normal;
+    text-align: left;
+}
+
+.skillsTableDiv {
+    display: inline-block;
+    float: none;
+    width: 45%;
+    min-width: 200px;
+}
+
+.languageTable {
+    border-collapse: collapse;
+    font-size: 15px;
+}
+
+.languageTable th {
+    width: 30%;
+    padding-right: 15px;
+    text-align: right;
+}
+
+.languageTable td {
+    width: 70%;
+    padding-bottom: 10px;
+    text-align: left;
+}
