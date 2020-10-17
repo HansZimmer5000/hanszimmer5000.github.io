@@ -1,0 +1,115 @@
+body {
+    text-align: center;
+    background-color: rgb(83, 83, 83);
+    font-family: arial;
+    color: white;
+}
+
+h2 {
+    font-size: calc(25px + 1vw);
+    font-weight: normal
+}
+
+article {
+    padding-left: 7%;
+    padding-right: 7%;
+}
+
+.articlehead {
+    font-size: calc(18px + 1vw);
+    font-weight: normal;
+}
+
+.articletext {
+    text-align: left;
+}
+
+address {
+    padding: 10px;
+}
+
+a {
+    color: rgb(255, 255, 255);
+}
+
+a:hover {
+    color: rgb(196, 196, 196);
+}
+
+.head {
+    padding-top: 20px;
+    padding-bottom: 1px;
+    background: rgb(125, 156, 122);
+    height: auto;
+}
+
+.headleft {
+    text-align: right;
+    float: none;
+    display: inline-block;
+}
+
+.headright {
+    padding-left: 7px;
+    font-size: calc(36px + 1vw);
+    font-weight: normal;
+    text-align: left;
+    float: none;
+    display: inline-block;
+}
+
+.taskbar {
+    width: auto;
+    padding: 2px;
+    background: rgb(50, 137, 139);
+}
+
+.profilepicture {
+    width: 100%;
+    max-width: 130px;
+    max-height: 130px;
+    min-width: 75px;
+    min-height: 75px;
+}
+
+.occupation {
+    padding-top: 5px;
+    font-size: calc(12px + 1vw);
+}
+
+.footerbar {
+    height: 100px;
+}
+
+.impressumfooter {
+    text-align: right;
+    background: burlywood;
+    padding: 1px;
+}
+
+.impressumlink {
+    padding-right: 5px;
+    color: black;
+}
+
+.centerTable {
+    border-collapse: collapse;
+    border-spacing: 0;
+    margin: 0px auto;
+}
+
+.centerTable th {
+    font-size: 15px;
+    padding: 10px 10px;
+    overflow: hidden;
+    word-break: normal;
+    text-align: right;
+}
+
+.centerTable td {
+    font-size: 15px;
+    padding: 10px 10px;
+    overflow: hidden;
+    word-break: normal;
+    text-align: left;
+}
