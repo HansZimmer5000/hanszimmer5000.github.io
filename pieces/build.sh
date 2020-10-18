@@ -34,11 +34,16 @@ fill_template_common(){
 
 fill_template_content(){
     old="SomeContent"
-    # TODO, this creates problems with "skills.html" 
+    # TODO, this creates problems with "skills.html" format
     new="$(cat $2 | tr '\n' ' ')"
     echo "Content: $1 $2"
     rule="""s|$old|$new|"""
     sed -i -r -e "$rule" $1
+}
+
+hotfix_remove_template_content(){
+    #TODO remove hotfix by directly not inserting "SomeContent" into pages. But I dont know yet how that happend.
+    sed -i -r -e 's|SomeContent ||g' $1
 }
 
 for page in $(ls pages); do
@@ -47,5 +52,6 @@ for page in $(ls pages); do
     prepare_template "$final_page"
     fill_template_common "$final_page"
     fill_template_content "$final_page" "pages/$page"
+    hotfix_remove_template_content "$final_page"
 done
 
