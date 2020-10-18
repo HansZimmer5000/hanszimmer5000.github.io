@@ -42,8 +42,6 @@ fill_template_content(){
     echo "$filled_page" > "$1" 
 }
 
-# TODO two heads?
-# TODO fix link to profile
 for page in $(ls pages); do
     final_page="$final_dir/$page"
 
