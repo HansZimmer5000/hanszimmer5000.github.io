@@ -22,10 +22,7 @@ fill_template_common(){
     shopt -s extglob
 
     old="head.html"
-    # TODO with "tr" this works, problem will be when we fill the content that has multi lines.
     new="$(cat common/head.html | tr '\n' ' ')"
-
-
 
     for common in $(ls common); do
         old="$common"
@@ -37,9 +34,11 @@ fill_template_common(){
 
 fill_template_content(){
     old="SomeContent"
-    new="$(cat $2)"
-    filled_page=$(echo "$1" | sed -e "s/$old/$new/")
-    echo "$filled_page" > "$1" 
+    # TODO, this creates problems with "skills.html" 
+    new="$(cat $2 | tr '\n' ' ')"
+    echo "Content: $1 $2"
+    rule="""s|$old|$new|"""
+    sed -i -r -e "$rule" $1
 }
 
 for page in $(ls pages); do
@@ -47,6 +46,6 @@ for page in $(ls pages); do
 
     prepare_template "$final_page"
     fill_template_common "$final_page"
-    #fill_template_content "$final_page" "$page"
+    fill_template_content "$final_page" "pages/$page"
 done
 
