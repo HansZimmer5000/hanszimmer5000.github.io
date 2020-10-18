@@ -47,6 +47,10 @@ hotfix_remove_template_content(){
 }
 
 for page in $(ls pages); do
+    # TODO dynamically set index.html
+    # TODO dynamically set links to other pages
+    # TODO end testing and save files to repo root.
+
     final_page="$final_dir/$page"
 
     prepare_template "$final_page"
