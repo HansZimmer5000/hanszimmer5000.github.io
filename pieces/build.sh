@@ -32,6 +32,10 @@ fill_content(){
     echo "</body>" >>"$1"
 }
 
+finish_page(){
+    echo "</html>" >> "$final_page"
+}
+
 for page in $(ls pages); do
     final_page="$final_dir/$page"
     echo "Building: $final_page"
@@ -39,6 +43,6 @@ for page in $(ls pages); do
     prepare_template "$final_page"
     fill_upper "$final_page"
     fill_content "$final_page" "pages/$page"
-    echo "</html>" >> "$final_page"
+    finish_page "$final_page"
 done
 
