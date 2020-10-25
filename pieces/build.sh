@@ -15,47 +15,32 @@ fi
 # TODO insert input from commons and the respective page
 
 prepare_template(){
-    cp common/template.html "$1"
+    touch "$1"
+    echo "
+<!doctype html>
+<html lang='en' class='no-js'>
+" > "$final_page"
 }
 
-fill_template_common(){
-    shopt -s extglob
+fill_upper(){
 
-    old="head.html"
-    new="$(cat common/head.html | tr '\n' ' ')"
-
-    for common in $(ls common); do
-        old="$common"
-        new="$(cat common/$common | tr '\n' ' ')"
-        rule="""s|$old|$new|"""
-        sed -i -r -e "$rule" $1
-    done
 }
 
-fill_template_content(){
-    old="SomeContent"
-    # TODO, this creates problems with "skills.html" format
-    new="$(cat $2 | tr '\n' ' ')"
-    echo "Content: $1 $2"
-    rule="""s|$old|$new|"""
-    sed -i -r -e "$rule" $1
+fill_content(){
+
 }
 
-hotfix_remove_template_content(){
-    #TODO remove hotfix by directly not inserting "SomeContent" into pages. But I dont know yet how that happend.
-    sed -i -r -e 's|SomeContent ||g' $1
+fill_lower(){
+
 }
 
 for page in $(ls pages); do
-    # TODO dynamically set index.html
-    # TODO dynamically set links to other pages
-    # TODO end testing and save files to repo root.
-
     final_page="$final_dir/$page"
 
     prepare_template "$final_page"
-    fill_template_common "$final_page"
-    fill_template_content "$final_page" "pages/$page"
-    hotfix_remove_template_content "$final_page"
+    fill_upper "$final_page"
+    fill_content "$final_page" "pages/$page"
+    fill_lower "$final_page"
+    echo "</html>" > "$final_page"
 done
 
