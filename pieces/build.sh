@@ -10,10 +10,6 @@ if $testing; then
     final_dir=$testing_final_dir
 fi
 
-# TODO consider all pages 
-# TODO input template and rename to respective page
-# TODO insert input from commons and the respective page
-
 prepare_template(){
     rm "$1"
     touch "$1"
@@ -38,6 +34,7 @@ fill_content(){
 
 for page in $(ls pages); do
     final_page="$final_dir/$page"
+    echo "Building: $final_page"
 
     prepare_template "$final_page"
     fill_upper "$final_page"
