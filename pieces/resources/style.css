@@ -113,3 +113,27 @@ a:hover {
     word-break: normal;
     text-align: left;
 }
+
+.skillsTableDiv {
+    display: inline-block;
+    float: none;
+    width: 45%;
+    min-width: 200px;
+}
+
+.languageTable {
+    border-collapse: collapse;
+    font-size: 15px;
+}
+
+.languageTable th {
+    width: 30%;
+    padding-right: 15px;
+    text-align: right;
+}
+
+.languageTable td {
+    width: 70%;
+    padding-bottom: 10px;
+    text-align: left;
+}
