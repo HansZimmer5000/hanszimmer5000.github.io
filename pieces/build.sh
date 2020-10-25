@@ -34,7 +34,7 @@ fill_template_common(){
 
 fill_template_content(){
     old="SomeContent"
-    # TODO, this creates problems with "skills.html" format
+    # TODO, this creates problems with "skills.html", missing "&"
     new="$(cat $2 | tr '\n' ' ')"
     echo "Content: $1 $2"
     rule="""s|$old|$new|"""
