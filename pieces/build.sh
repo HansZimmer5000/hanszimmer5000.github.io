@@ -15,23 +15,25 @@ fi
 # TODO insert input from commons and the respective page
 
 prepare_template(){
+    rm "$1"
     touch "$1"
     echo "
 <!doctype html>
 <html lang='en' class='no-js'>
-" > "$final_page"
+" >>"$final_page"
 }
 
 fill_upper(){
-
+    cat "common/head.html" >>"$1"
 }
 
 fill_content(){
-
-}
-
-fill_lower(){
-
+    echo "<body>" >>"$1"
+    cat "common/upper.html" >>"$1"
+    cat "common/mid.html" >>"$1"
+    cat "$2" >>"$1"
+    cat "common/footer.html" >>"$1"
+    echo "</body>" >>"$1"
 }
 
 for page in $(ls pages); do
@@ -40,7 +42,6 @@ for page in $(ls pages); do
     prepare_template "$final_page"
     fill_upper "$final_page"
     fill_content "$final_page" "pages/$page"
-    fill_lower "$final_page"
-    echo "</html>" > "$final_page"
+    echo "</html>" >> "$final_page"
 done
 
