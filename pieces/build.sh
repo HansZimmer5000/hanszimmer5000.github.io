@@ -4,7 +4,7 @@ testing=true
 final_dir=".." 
 testing_final_dir="."
 index_site="publications.html"
-sites_to_link=("blog" "publications" "skills")
+all_sites=("404" "blog" "impressum" "publications" "skills")
 
 if $testing; then
     final_dir=$testing_final_dir
@@ -46,10 +46,16 @@ hotfix_remove_template_content(){
     sed -i -r -e 's|SomeContent ||g' $1
 }
 
+set_links(){
+    for site in ${all_sites[@]}; do
+        ln -s $site.html ../$site.html
+    done
+}
+
 set_index(){
     if [[ "$1" == *".html" ]]; then
         rm ../index.html
-        ln -s $1 ../index.html
+        ln -s ../$1 ../index.html
     else 
         echo "Argument 1 must be .html file, was $1"
     fi
@@ -65,6 +71,7 @@ for page in $(ls pages); do
     fill_template_common "$final_page"
     fill_template_content "$final_page" "pages/$page"
     hotfix_remove_template_content "$final_page"
-    set_index blog.html
+    set_links
+    set_index $index_site
 done
 
