@@ -46,8 +46,16 @@ hotfix_remove_template_content(){
     sed -i -r -e 's|SomeContent ||g' $1
 }
 
+set_index(){
+    if [[ "$1" == *".html" ]]; then
+        rm ../index.html
+        ln -s $1 ../index.html
+    else 
+        echo "Argument 1 must be .html file, was $1"
+    fi
+}
+
 for page in $(ls pages); do
-    # TODO dynamically set index.html
     # TODO dynamically set links to other pages
     # TODO end testing and save files to repo root.
 
@@ -57,5 +65,6 @@ for page in $(ls pages); do
     fill_template_common "$final_page"
     fill_template_content "$final_page" "pages/$page"
     hotfix_remove_template_content "$final_page"
+    set_index blog.html
 done
 
