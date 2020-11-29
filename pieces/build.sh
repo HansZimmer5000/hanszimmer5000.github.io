@@ -1,8 +1,8 @@
 #!/bin/bash
 
 testing=true
-final_dir=".." 
-testing_final_dir="."
+final_dir="$PWD/.." 
+testing_final_dir="$PWD"
 index_site="publications.html"
 all_sites=("404" "blog" "impressum" "publications" "skills")
 
@@ -46,12 +46,6 @@ hotfix_remove_template_content(){
     sed -i -r -e 's|SomeContent ||g' $1
 }
 
-set_links(){
-    for site in ${all_sites[@]}; do
-        ln -s $site.html $final_dir/$site.html
-    done
-}
-
 set_index(){
     if [[ "$1" == *".html" ]]; then
         rm $final_dir/index.html
@@ -71,7 +65,8 @@ for page in $(ls pages); do
     fill_template_common "$final_page"
     fill_template_content "$final_page" "pages/$page"
     hotfix_remove_template_content "$final_page"
-    set_links
     set_index $index_site
+
+    test_sites
 done
 
