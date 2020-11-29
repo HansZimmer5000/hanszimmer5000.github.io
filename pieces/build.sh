@@ -48,14 +48,14 @@ hotfix_remove_template_content(){
 
 set_links(){
     for site in ${all_sites[@]}; do
-        ln -s $site.html ../$site.html
+        ln -s $site.html $final_dir/$site.html
     done
 }
 
 set_index(){
     if [[ "$1" == *".html" ]]; then
-        rm ../index.html
-        ln -s ../$1 ../index.html
+        rm $final_dir/index.html
+        ln -s $final_dir/$1 $final_dir/index.html
     else 
         echo "Argument 1 must be .html file, was $1"
     fi
