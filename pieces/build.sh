@@ -63,7 +63,7 @@ test_site(){
 }
 
 for page in ${all_sites[@]}; do
-    # TODO dynamically set links to other pages
+    # dynamically set links to other pages -> not neccessary since index.html is just a link and other names are not changing.
     # TODO end testing and save files to repo root.
 
     final_page="$final_dir/$page.html"
@@ -72,8 +72,8 @@ for page in ${all_sites[@]}; do
     fill_template_common "$final_page"
     fill_template_content "$final_page" "pages/$page.html"
     hotfix_remove_template_content "$final_page"
-    set_index $index_site
 
     test_site $page.html #2>/dev/null
 done
 
+set_index $index_site
