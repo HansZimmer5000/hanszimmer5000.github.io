@@ -55,18 +55,25 @@ set_index(){
     fi
 }
 
-for page in $(ls pages); do
+test_site(){
+    trim_command="xargs" #sed 's/ //g'
+    if [[ "$(curl -s file://$PWD/$1 | $trim_command 2>/dev/null)" != *"$(cat pages/$1 | $trim_command 2>/dev/null)"* ]]; then
+        >&2 echo "$1 was not correct build!"
+    fi
+}
+
+for page in ${all_sites[@]}; do
     # TODO dynamically set links to other pages
     # TODO end testing and save files to repo root.
 
-    final_page="$final_dir/$page"
+    final_page="$final_dir/$page.html"
 
     prepare_template "$final_page"
     fill_template_common "$final_page"
-    fill_template_content "$final_page" "pages/$page"
+    fill_template_content "$final_page" "pages/$page.html"
     hotfix_remove_template_content "$final_page"
     set_index $index_site
 
-    test_sites
+    test_site $page.html #2>/dev/null
 done
 
