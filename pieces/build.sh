@@ -56,8 +56,8 @@ set_index(){
 }
 
 test_site(){
-    trim_command="xargs" #sed 's/ //g'
-    if [[ "$(curl -s file://$PWD/$1 | $trim_command 2>/dev/null)" != *"$(cat pages/$1 | $trim_command 2>/dev/null)"* ]]; then
+    trim_command="tr -d 'n' | sed 's/ //g'"
+    if [[ "$(cat $1 | $trim_command 2>/dev/null)" != *"$(cat pages/$1 | $trim_command 2>/dev/null)"* ]]; then
         >&2 echo "$1 was not correct build!"
     fi
 }
