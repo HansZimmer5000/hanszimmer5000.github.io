@@ -48,7 +48,7 @@ hotfix_remove_template_content(){
 
 set_index(){
     if [[ "$1" == *".html" ]]; then
-        rm $final_dir/index.html
+        rm -f $final_dir/index.html
         ln -s $final_dir/$1 $final_dir/index.html
     else 
         echo "Argument 1 must be .html file, was $1"
@@ -61,6 +61,55 @@ test_site(){
         >&2 echo "$1 was not correct build!"
     fi
 }
+
+create_blog_content(){
+    # Build pages/blog.html
+    echo > pages/blog.html
+    blog_entry_dir=pages/blog_entries
+    for blog_entry in $(ls $blog_entry_dir); do
+        blog_entry_file=$blog_entry_dir/$blog_entry
+        echo $blog_entry_file
+
+        if [[ "$(tail -c 1 $blog_entry_file)" != "" ]]; then
+            echo "File '$blog_entry_file' without empty last line, will append it now"
+            echo "" >> $blog_entry_file
+        fi
+
+        blog_entry_parsed=""
+        line_index=0
+        while IFS= read -r line; do
+
+            if [ $line_index -eq 0 ]; then
+                blog_entry_parsed=$(cat << EOF
+    <h3 class="articlehead">$line</h3>
+    <div class="articletext">
+EOF
+    )
+            else 
+                blog_entry_parsed=$(cat << EOF
+    $blog_entry_parsed
+    <par>    
+    $line   
+    </par>  
+EOF
+    )
+            fi
+            
+            line_index=$((line_index+=1))
+        done < $blog_entry_file
+                blog_entry_parsed=$(cat << EOF
+    $blog_entry_parsed
+    </div>
+EOF
+    )
+        echo "<article>
+    $blog_entry_parsed
+    </article>" >> pages/blog.html
+        echo $line_index
+    done
+}
+
+create_blog_content
 
 for page in ${all_sites[@]}; do
     # dynamically set links to other pages -> not neccessary since index.html is just a link and other names are not changing.
