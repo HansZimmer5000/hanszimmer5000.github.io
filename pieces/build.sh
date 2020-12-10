@@ -1,13 +1,20 @@
 #!/bin/bash
 
-testing=true
+testing=false
 final_dir="$PWD/.." 
 testing_final_dir="$PWD"
 index_site="publications.html"
 all_sites=("404" "blog" "impressum" "publications" "skills")
+cssfile="resources/style.css"
+faviconico="resources/favicon.ico"
+profilepic="resources/profile.png"
 
 if $testing; then
     final_dir=$testing_final_dir
+else
+    cssfile="pieces/$cssfile"
+    faviconico="pieces/$faviconico"
+    profilepic="pieces/$profilepic"
 fi
 
 # TODO consider all pages 
@@ -39,6 +46,9 @@ fill_template_content(){
     echo "Content: $1 $2"
     rule="""s|$old|$new|"""
     sed -i -r -e "$rule" $1
+    sed -i -r -e """s|cssfile|$cssfile|""" $1
+    sed -i -r -e """s|faviconico|$faviconico|""" $1
+    sed -i -r -e """s|profilepic|$profilepic|""" $1
 }
 
 hotfix_remove_template_content(){
@@ -57,7 +67,7 @@ set_index(){
 
 test_site(){
     trim_command="tr -d 'n' | sed 's/ //g'"
-    if [[ "$(cat $1 | $trim_command 2>/dev/null)" != *"$(cat pages/$1 | $trim_command 2>/dev/null)"* ]]; then
+    if [[ "$(cat $final_dir/$1 | $trim_command 2>/dev/null)" != *"$(cat pages/$1 | $trim_command 2>/dev/null)"* ]]; then
         >&2 echo "$1 was not correct build!"
     fi
 }
