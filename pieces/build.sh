@@ -124,9 +124,6 @@ EOF
 create_blog_content
 
 for page in ${all_sites[@]}; do
-    # dynamically set links to other pages -> not neccessary since index.html is just a link and other names are not changing.
-    # TODO end testing and save files to repo root.
-
     final_page="$final_dir/$page.html"
 
     prepare_template "$final_page"
