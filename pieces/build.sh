@@ -134,7 +134,7 @@ for page in ${all_sites[@]}; do
     fill_template_content "$final_page" "pages/$page.html"
     hotfix_remove_template_content "$final_page"
 
-    test_site $page.html #2>/dev/null
+    test_site $page.html
 done
 
 set_index $index_site
