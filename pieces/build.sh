@@ -9,6 +9,11 @@ cssfile="resources/style.css"
 faviconico="resources/favicon.ico"
 profilepic="resources/profile.png"
 
+bloglink="<a href=blog.html>Blog</a>"
+publicationlink="<a href=publications.html>Publications</a>"
+skilllink="<a href=skills.html>Skills</a>"
+pagelinks="$bloglink, $publicationlink, $skilllink"
+
 if $testing; then
     final_dir=$testing_final_dir
 else
@@ -45,6 +50,7 @@ fill_template_content(){
     sed -i -r -e """s|cssfile|$cssfile|""" $1
     sed -i -r -e """s|faviconico|$faviconico|""" $1
     sed -i -r -e """s|profilepic|$profilepic|""" $1
+    sed -i -r -e """s|pagelinks|$pagelinks|""" $1
 }
 
 hotfix_remove_template_content(){
