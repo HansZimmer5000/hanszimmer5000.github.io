@@ -17,10 +17,6 @@ else
     profilepic="pieces/$profilepic"
 fi
 
-# TODO consider all pages 
-# TODO input template and rename to respective page
-# TODO insert input from commons and the respective page
-
 prepare_template(){
     cp common/template.html "$1"
 }
@@ -41,7 +37,7 @@ fill_template_common(){
 
 fill_template_content(){
     old="SomeContent"
-    # TODO, this creates problems with "skills.html", missing "&"
+    
     new="$(cat $2 | tr '\n' ' ')"
     echo "Content: $1 $2"
     rule="""s|$old|$new|"""
