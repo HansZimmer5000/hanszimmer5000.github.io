@@ -38,8 +38,11 @@ hotfix_remove_template_content(){
 
 set_index(){
     if [[ "$1" == *".html" ]]; then
-        rm -f "$final_dir/index.html"
-        ln -s "$final_dir/$1" "$final_dir/index.html"
+        (
+            cd "$final_dir"
+            rm -f "index.html"
+            ln -s "$1" "index.html"
+        )
     else 
         echo "Argument 1 must be .html file, was $1"
     fi
@@ -99,30 +102,30 @@ EOF
     done
 }
 
-final_dir="$PWD" 
-testing_final_dir="$PWD/testdir"
-index_site="publications.html"
-all_sites=("404" "blog" "impressum" "publications" "skills")
-cssfile="resources/style.css"
-faviconico="resources/favicon.ico"
-profilepic="resources/profile.png"
-
-bloglink="<a href=blog.html>Blog</a>"
-publicationlink="<a href=publications.html>Publications</a>"
-skilllink="<a href=skills.html>Skills</a>"
-pagelinks="$bloglink, $publicationlink, $skilllink"
-
-if [ "$1" = "-t" ]; then
-    mkdir -p "$testing_final_dir"
-    final_dir="$testing_final_dir"
-else
-    cssfile="pieces/$cssfile"
-    faviconico="pieces/$faviconico"
-    profilepic="pieces/$profilepic"
-fi
-
 (
     cd pieces || exit 1
+
+    final_dir=".." 
+    testing_final_dir="$final_dir/testdir"
+    index_site="publications.html"
+    all_sites=("404" "blog" "impressum" "publications" "skills")
+    cssfile="resources/style.css"
+    faviconico="resources/favicon.ico"
+    profilepic="resources/profile.png"
+
+    bloglink="<a href=blog.html>Blog</a>"
+    publicationlink="<a href=publications.html>Publications</a>"
+    skilllink="<a href=skills.html>Skills</a>"
+    pagelinks="$bloglink, $publicationlink, $skilllink"
+
+    if [ "$1" = "-t" ]; then
+        mkdir -p "$testing_final_dir"
+        final_dir="$testing_final_dir"
+    else
+        cssfile="pieces/$cssfile"
+        faviconico="pieces/$faviconico"
+        profilepic="pieces/$profilepic"
+    fi
 
     create_blog_content
 
