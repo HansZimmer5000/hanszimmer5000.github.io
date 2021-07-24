@@ -116,7 +116,7 @@ EOF
     bloglink="<a href=blog.html>Blog</a>"
     publicationlink="<a href=publications.html>Publications</a>"
     skilllink="<a href=skills.html>Skills</a>"
-    pagelinks="$bloglink, $publicationlink, $skilllink"
+    pagelinks="$publicationlink, $skilllink" #Intentionally missing: "$bloglink, "
 
     if [ "$1" = "-t" ]; then
         mkdir -p "$testing_final_dir"
