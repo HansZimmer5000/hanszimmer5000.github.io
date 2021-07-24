@@ -108,7 +108,7 @@ EOF
     final_dir=".." 
     testing_final_dir="$final_dir/testdir"
     index_site="publications.html"
-    all_sites=("404" "blog" "impressum" "publications" "skills")
+    all_sites=("404" "impressum" "publications" "skills") #Intentionally missing: "blog"
     cssfile="resources/style.css"
     faviconico="resources/favicon.ico"
     profilepic="resources/profile.png"
