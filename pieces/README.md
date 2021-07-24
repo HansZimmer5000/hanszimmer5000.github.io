@@ -1,14 +1,17 @@
 # Pieces
 
 This folder contains following html files:
-- common/head.html
-- common/upper.html
-- common/mid.html TODO contains link to files
-- common/footer.html
-- common/template.html TODO contains link to favicon.ico and style.css
-- resources/style.css
-- resources/favicon.ico
-- pages/skills.html
-- pages/publications.html
-- pages/impressum.html
-- pages/blog.html
+- `common/`: Contains common content that is equal for all HTML pages
+  - `head.html`: The HTML `head` section
+  - `upper.html`: The highest part of the page   
+  - `mid.html`: The part between the upper one and the page content
+  - `footer.html`: The lowest part of the page
+  - `template.html`: The general structure of a page
+- `resources/`: Contains additional resources
+  - `style.css`
+  - `favicon.ico`: Icon used in browser tab
+- `pages/`: Contains the page contents
+  - `skills.html`
+  - `publications.html`
+  - `impressum.html`
+  - `blog.html`
