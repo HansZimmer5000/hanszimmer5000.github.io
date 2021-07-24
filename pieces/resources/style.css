@@ -5,6 +5,10 @@ body {
     color: white;
 }
 
+b {
+    font-size: 19px
+}
+
 h2 {
     font-size: calc(25px + 1vw);
     font-weight: normal
