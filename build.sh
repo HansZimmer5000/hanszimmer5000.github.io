@@ -142,3 +142,7 @@ EOF
 
     set_index $index_site
 )
+
+
+# TODO for some reason BSD sed (MacOS) creates "${page}.html-r" files. Think some arguments are differently used from Linux / BSD
+rm -f *.html-r
