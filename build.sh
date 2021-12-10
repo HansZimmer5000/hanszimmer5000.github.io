@@ -176,6 +176,22 @@ pagelinks="$bloglink, $publicationlink, $skilllink" #Intentionally missing: "$bl
 (
     cd pieces || exit 1
 
+<<<<<<< HEAD
+=======
+    final_dir=".." 
+    testing_final_dir="$final_dir/testdir"
+    index_site="publications.html"
+    all_sites=("404" "impressum" "publications" "skills" "blogv2") #Intentionally missing: "blog"
+    cssfile="resources/style.css"
+    faviconico="resources/favicon.ico"
+    profilepic="resources/profile.png"
+
+    bloglink="<a href=blogv2.html>Blog</a>"
+    publicationlink="<a href=publications.html>Publications</a>"
+    skilllink="<a href=skills.html>Skills</a>"
+    pagelinks="$bloglink, $publicationlink, $skilllink" #Intentionally missing: "$bloglink, "
+
+>>>>>>> 7a68a9b (merge new blog html to normal structure)
     if [ "$1" = "-t" ]; then
         mkdir -p "$testing_final_dir"
         final_dir="$testing_final_dir"
