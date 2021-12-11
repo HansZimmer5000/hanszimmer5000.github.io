@@ -165,5 +165,5 @@ pagelinks="$bloglink, $publicationlink, $skilllink" #Intentionally missing: "$bl
     set_index $index_site
 )
 
-# TODO for some reason BSD sed (MacOS) creates "${page}.html-r" files. Think some arguments are differently used from Linux / BSD
+# TODO for some reason BSD 'sed' (MacOS) creates "${page}.html-r" files. Think some arguments are differently used from Linux to BSD
 rm -f ./*.html-r ./testdir/*.html-r
