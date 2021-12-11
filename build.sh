@@ -120,21 +120,32 @@ $parsed_blog_entries
         }' pages/blogv2raw.html > pages/blogv2.html
 }
 
+create_final_page(){
+    final_page="$final_dir/$page.html"
+
+    prepare_template "$final_page"
+    fill_template_common "$final_page"
+    fill_template_content "$final_page" "pages/$page.html"
+    hotfix_remove_template_content "$final_page"
+
+    test_site "$page.html"
+}
+
+final_dir=".." 
+testing_final_dir="$final_dir/testdir"
+index_site="publications.html"
+all_sites=("404" "impressum" "publications" "skills" "blogv2") #Intentionally missing: "blog"
+cssfile="resources/style.css"
+faviconico="resources/favicon.ico"
+profilepic="resources/profile.png"
+
+bloglink="<a href=blogv2.html>Blog</a>"
+publicationlink="<a href=publications.html>Publications</a>"
+skilllink="<a href=skills.html>Skills</a>"
+pagelinks="$bloglink, $publicationlink, $skilllink" #Intentionally missing: "$bloglink, "
+
 (
     cd pieces || exit 1
-
-    final_dir=".." 
-    testing_final_dir="$final_dir/testdir"
-    index_site="publications.html"
-    all_sites=("404" "impressum" "publications" "skills" "blogv2") #Intentionally missing: "blog"
-    cssfile="resources/style.css"
-    faviconico="resources/favicon.ico"
-    profilepic="resources/profile.png"
-
-    bloglink="<a href=blogv2.html>Blog</a>"
-    publicationlink="<a href=publications.html>Publications</a>"
-    skilllink="<a href=skills.html>Skills</a>"
-    pagelinks="$bloglink, $publicationlink, $skilllink" #Intentionally missing: "$bloglink, "
 
     if [ "$1" = "-t" ]; then
         mkdir -p "$testing_final_dir"
@@ -148,18 +159,11 @@ $parsed_blog_entries
     create_blog_content
 
     for page in "${all_sites[@]}"; do
-        final_page="$final_dir/$page.html"
-
-        prepare_template "$final_page"
-        fill_template_common "$final_page"
-        fill_template_content "$final_page" "pages/$page.html"
-        hotfix_remove_template_content "$final_page"
-
-        test_site "$page.html"
+        create_final_page
     done
 
     set_index $index_site
 )
 
 # TODO for some reason BSD sed (MacOS) creates "${page}.html-r" files. Think some arguments are differently used from Linux / BSD
-rm -f ./*.html-r
+rm -f ./*.html-r ./testdir/*.html-r
