@@ -18,6 +18,7 @@ fill_template_common(){
     old="head.html"
     new="$(tr '\n' ' ' < common/head.html)"
 <<<<<<< HEAD
+<<<<<<< HEAD
     
     for common in $(ls common); do
         old="$common"
@@ -28,6 +29,12 @@ fill_template_common(){
         old="$common"
         new="$(tr '\n' ' ' < common/$common)"
 >>>>>>> e232473 (incorporate blogv2)
+=======
+    
+    for common in $(ls common); do
+        old="$common"
+        new="$(tr '\n' ' ' < common/"$common")"
+>>>>>>> 14a9f8f (refactor more)
         rule="""s|$old|$new|"""
         sed -i -r -e "$rule" "$1"
     done
@@ -73,7 +80,7 @@ test_site(){
     html_file="$1"
 
     trim_command="tr -d 'n' | sed 's/ //g'"
-    trimmed_content_a=$(cat $final_dir/$html_file | $trim_command 2>/dev/null)
+    trimmed_content_a=$(cat "$final_dir/$html_file" | $trim_command 2>/dev/null)
     trimmed_content_b=$(cat "pages/$html_file" | $trim_command 2>/dev/null)
 
     if [[ "$trimmed_content_a" != *"$trimmed_content_b"* ]]; then
@@ -192,11 +199,15 @@ create_blog_content(){
     blog_entry_dir=pages/blog_entries
 
 <<<<<<< HEAD
+<<<<<<< HEAD
     for blog_entry_file in "$blog_entry_dir"/*; do
 =======
     for blog_entry in $(ls $blog_entry_dir); do
         blog_entry_file="$blog_entry_dir/$blog_entry"
 >>>>>>> e232473 (incorporate blogv2)
+=======
+    for blog_entry_file in "$blog_entry_dir"/*; do
+>>>>>>> 14a9f8f (refactor more)
         echo "$blog_entry_file"
 
         parsed_blog_entries=$(parse_blog_entry)
@@ -293,5 +304,9 @@ pagelinks="$bloglink, $publicationlink, $skilllink" #Intentionally missing: "$bl
 rm -f ./*.html-r ./testdir/*.html-r
 =======
 # TODO for some reason BSD sed (MacOS) creates "${page}.html-r" files. Think some arguments are differently used from Linux / BSD
+<<<<<<< HEAD
 rm -f *.html-r
 >>>>>>> e232473 (incorporate blogv2)
+=======
+rm -f ./*.html-r
+>>>>>>> 14a9f8f (refactor more)
