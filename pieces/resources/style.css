@@ -18,20 +18,6 @@ h2 {
     font-weight: normal
 }
 
-article {
-    padding-left: 7%;
-    padding-right: 7%;
-}
-
-.articlehead {
-    font-size: calc(18px + 1vw);
-    font-weight: normal;
-}
-
-.articletext {
-    text-align: left;
-}
-
 address {
     padding: 10px;
 }

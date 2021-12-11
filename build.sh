@@ -8,11 +8,11 @@ fill_template_common(){
     shopt -s extglob
 
     old="head.html"
-    new="$(cat common/head.html | tr '\n' ' ')"
+    new="$(tr '\n' ' ' < common/head.html)"
 
     for common in $(ls common); do
         old="$common"
-        new="$(cat common/$common | tr '\n' ' ')"
+        new="$(tr '\n' ' ' < common/$common)"
         rule="""s|$old|$new|"""
         sed -i -r -e "$rule" "$1"
     done
@@ -49,57 +49,76 @@ set_index(){
 }
 
 test_site(){
+    html_file="$1"
+
     trim_command="tr -d 'n' | sed 's/ //g'"
-    if [[ "$(cat $final_dir/$1 | $trim_command 2>/dev/null)" != *"$(cat pages/$1 | $trim_command 2>/dev/null)"* ]]; then
+    trimmed_content_a=$(cat $final_dir/$html_file | $trim_command 2>/dev/null)
+    trimmed_content_b=$(cat "pages/$html_file" | $trim_command 2>/dev/null)
+
+    if [[ "$trimmed_content_a" != *"$trimmed_content_b"* ]]; then
         >&2 echo "$1 was not correct build!"
     fi
+}
+
+parse_blog_entry_line(){
+    if [ "$line_index" -eq 0 ]; then
+        parsed_blog_entries=$(cat << EOF
+    <h2>$line</h2>
+    <div class="articletext">
+EOF
+        )
+    else 
+        parsed_blog_entries=$(cat << EOF
+    $parsed_blog_entries
+    <par>    
+    $line   
+    </par>  
+EOF
+        )
+    fi   
+    line_index=$((line_index+=1))
+}
+
+parse_blog_entry(){
+    if [[ "$(tail -c 1 "$blog_entry_file")" != "" ]]; then
+        echo "File '$blog_entry_file' without empty last line, will append it now"
+        echo "" >> "$blog_entry_file"
+    fi
+
+    parsed_blog_entries=""
+    line_index=0
+    while IFS= read -r line; do
+        parse_blog_entry_line
+    done < "$blog_entry_file"
+        
+    parsed_blog_entries=$(cat << EOF
+    $parsed_blog_entries
+    </div>
+EOF
+    )
+    echo "$parsed_blog_entries"
 }
 
 create_blog_content(){
     # Build pages/blog.html
     echo > pages/blog.html
     blog_entry_dir=pages/blog_entries
+
     for blog_entry in $(ls $blog_entry_dir); do
         blog_entry_file="$blog_entry_dir/$blog_entry"
         echo "$blog_entry_file"
 
-        if [[ "$(tail -c 1 "$blog_entry_file")" != "" ]]; then
-            echo "File '$blog_entry_file' without empty last line, will append it now"
-            echo "" >> "$blog_entry_file"
-        fi
-
-        blog_entry_parsed=""
-        line_index=0
-        while IFS= read -r line; do
-
-            if [ $line_index -eq 0 ]; then
-                blog_entry_parsed=$(cat << EOF
-    <h3 class="articlehead">$line</h3>
-    <div class="articletext">
-EOF
-    )
-            else 
-                blog_entry_parsed=$(cat << EOF
-    $blog_entry_parsed
-    <par>    
-    $line   
-    </par>  
-EOF
-    )
-            fi
-            
-            line_index=$((line_index+=1))
-        done < "$blog_entry_file"
-                blog_entry_parsed=$(cat << EOF
-    $blog_entry_parsed
-    </div>
-EOF
-    )
+        parsed_blog_entries=$(parse_blog_entry)
+        
         echo "<article>
-    $blog_entry_parsed
-    </article>" >> pages/blog.html
-        echo $line_index
+$parsed_blog_entries
+</article>" >> pages/blog.html
     done
+
+    sed '/pleaseinsertcontenthere/{
+            s/pleaseinsertcontenthere//g
+            r pages/blog.html
+        }' pages/blogv2raw.html > pages/blogv2.html
 }
 
 (
@@ -129,7 +148,7 @@ EOF
 
     create_blog_content
 
-    for page in ${all_sites[@]}; do
+    for page in "${all_sites[@]}"; do
         final_page="$final_dir/$page.html"
 
         prepare_template "$final_page"
@@ -142,7 +161,6 @@ EOF
 
     set_index $index_site
 )
-
 
 # TODO for some reason BSD sed (MacOS) creates "${page}.html-r" files. Think some arguments are differently used from Linux / BSD
 rm -f *.html-r
