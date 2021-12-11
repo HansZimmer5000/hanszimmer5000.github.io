@@ -9,10 +9,10 @@ fill_template_common(){
 
     old="head.html"
     new="$(tr '\n' ' ' < common/head.html)"
-
+    
     for common in $(ls common); do
         old="$common"
-        new="$(tr '\n' ' ' < common/$common)"
+        new="$(tr '\n' ' ' < common/"$common")"
         rule="""s|$old|$new|"""
         sed -i -r -e "$rule" "$1"
     done
@@ -21,7 +21,7 @@ fill_template_common(){
 fill_template_content(){
     old="SomeContent"
     
-    new="$(cat $2 | tr '\n' ' ')"
+    new="$(tr '\n' ' ' < "$2")"
     echo "Content: $1 $2"
     rule="""s|$old|$new|"""
     sed -i -r -e "$rule" "$1"
@@ -39,11 +39,11 @@ hotfix_remove_template_content(){
 set_index(){
     if [[ "$1" == *".html" ]]; then
         (
-            cd "$final_dir"
+            cd "$final_dir" || return 1
             rm -f "index.html"
             ln -s "$1" "index.html"
         )
-    else 
+    else
         echo "Argument 1 must be .html file, was $1"
     fi
 }
@@ -52,7 +52,7 @@ test_site(){
     html_file="$1"
 
     trim_command="tr -d 'n' | sed 's/ //g'"
-    trimmed_content_a=$(cat $final_dir/$html_file | $trim_command 2>/dev/null)
+    trimmed_content_a=$(cat "$final_dir/$html_file" | $trim_command 2>/dev/null)
     trimmed_content_b=$(cat "pages/$html_file" | $trim_command 2>/dev/null)
 
     if [[ "$trimmed_content_a" != *"$trimmed_content_b"* ]]; then
@@ -104,8 +104,7 @@ create_blog_content(){
     echo > pages/blog.html
     blog_entry_dir=pages/blog_entries
 
-    for blog_entry in $(ls $blog_entry_dir); do
-        blog_entry_file="$blog_entry_dir/$blog_entry"
+    for blog_entry_file in "$blog_entry_dir"/*; do
         echo "$blog_entry_file"
 
         parsed_blog_entries=$(parse_blog_entry)
@@ -163,4 +162,4 @@ $parsed_blog_entries
 )
 
 # TODO for some reason BSD sed (MacOS) creates "${page}.html-r" files. Think some arguments are differently used from Linux / BSD
-rm -f *.html-r
+rm -f ./*.html-r
