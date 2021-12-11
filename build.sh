@@ -17,10 +17,17 @@ fill_template_common(){
 
     old="head.html"
     new="$(tr '\n' ' ' < common/head.html)"
+<<<<<<< HEAD
     
     for common in $(ls common); do
         old="$common"
         new="$(tr '\n' ' ' < common/"$common")"
+=======
+
+    for common in $(ls common); do
+        old="$common"
+        new="$(tr '\n' ' ' < common/$common)"
+>>>>>>> e232473 (incorporate blogv2)
         rule="""s|$old|$new|"""
         sed -i -r -e "$rule" "$1"
     done
@@ -56,10 +63,22 @@ set_index(){
     fi
 }
 
+<<<<<<< HEAD
 siteb_is_in_sitea(){
     if ! test -f "$1"; then
         log_err "siteb_is_in_sitea: could not find $1"
         return 1
+=======
+test_site(){
+    html_file="$1"
+
+    trim_command="tr -d 'n' | sed 's/ //g'"
+    trimmed_content_a=$(cat $final_dir/$html_file | $trim_command 2>/dev/null)
+    trimmed_content_b=$(cat "pages/$html_file" | $trim_command 2>/dev/null)
+
+    if [[ "$trimmed_content_a" != *"$trimmed_content_b"* ]]; then
+        >&2 echo "$1 was not correct build!"
+>>>>>>> e232473 (incorporate blogv2)
     fi
     if ! test -f "$2"; then
         log_err "siteb_is_in_sitea: could not find $2"
@@ -128,12 +147,56 @@ EOF
     echo "$parsed_blog_entries"
 }
 
+parse_blog_entry_line(){
+    if [ "$line_index" -eq 0 ]; then
+        parsed_blog_entries=$(cat << EOF
+    <h2>$line</h2>
+    <div class="articletext">
+EOF
+        )
+    else 
+        parsed_blog_entries=$(cat << EOF
+    $parsed_blog_entries
+    <par>    
+    $line   
+    </par>  
+EOF
+        )
+    fi   
+    line_index=$((line_index+=1))
+}
+
+parse_blog_entry(){
+    if [[ "$(tail -c 1 "$blog_entry_file")" != "" ]]; then
+        echo "File '$blog_entry_file' without empty last line, will append it now"
+        echo "" >> "$blog_entry_file"
+    fi
+
+    parsed_blog_entries=""
+    line_index=0
+    while IFS= read -r line; do
+        parse_blog_entry_line
+    done < "$blog_entry_file"
+        
+    parsed_blog_entries=$(cat << EOF
+    $parsed_blog_entries
+    </div>
+EOF
+    )
+    echo "$parsed_blog_entries"
+}
+
 create_blog_content(){
     # Build pages/blog.html
     echo > pages/blog.html
     blog_entry_dir=pages/blog_entries
 
+<<<<<<< HEAD
     for blog_entry_file in "$blog_entry_dir"/*; do
+=======
+    for blog_entry in $(ls $blog_entry_dir); do
+        blog_entry_file="$blog_entry_dir/$blog_entry"
+>>>>>>> e232473 (incorporate blogv2)
         echo "$blog_entry_file"
 
         parsed_blog_entries=$(parse_blog_entry)
@@ -146,7 +209,11 @@ $parsed_blog_entries
     sed '/pleaseinsertcontenthere/{
             s/pleaseinsertcontenthere//g
             r pages/blog.html
+<<<<<<< HEAD
         }' pages/blograw.html > pages/blog.html
+=======
+        }' pages/blogv2raw.html > pages/blogv2.html
+>>>>>>> e232473 (incorporate blogv2)
 }
 
 create_final_page(){
@@ -204,11 +271,27 @@ pagelinks="$bloglink, $publicationlink, $skilllink" #Intentionally missing: "$bl
     create_blog_content
 
     for page in "${all_sites[@]}"; do
+<<<<<<< HEAD
         create_final_page
+=======
+        final_page="$final_dir/$page.html"
+
+        prepare_template "$final_page"
+        fill_template_common "$final_page"
+        fill_template_content "$final_page" "pages/$page.html"
+        hotfix_remove_template_content "$final_page"
+
+        test_site "$page.html"
+>>>>>>> e232473 (incorporate blogv2)
     done
 
     set_index $index_site
 )
 
+<<<<<<< HEAD
 # TODO for some reason BSD 'sed' (MacOS) creates "${page}.html-r" files. Think some arguments are differently used from Linux to BSD
 rm -f ./*.html-r ./testdir/*.html-r
+=======
+# TODO for some reason BSD sed (MacOS) creates "${page}.html-r" files. Think some arguments are differently used from Linux / BSD
+rm -f *.html-r
+>>>>>>> e232473 (incorporate blogv2)
