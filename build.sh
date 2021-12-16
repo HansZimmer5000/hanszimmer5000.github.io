@@ -1,5 +1,13 @@
 #!/bin/bash
 
+log(){
+    echo "$*"
+}
+
+log_err(){
+    log "$*" 1>&2
+}
+
 prepare_template(){
     cp common/template.html "$1"
 }
@@ -48,16 +56,37 @@ set_index(){
     fi
 }
 
+siteb_is_in_sitea(){
+    if ! test -f "$1"; then
+        log_err "siteb_is_in_sitea: could not find $1"
+        return 1
+    fi
+    if ! test -f "$2"; then
+        log_err "siteb_is_in_sitea: could not find $2"
+        return 1
+    fi
+
+    trimmed_content_a=$(tr -d '\n' < "$1" | sed 's/ //g')
+    trimmed_content_b=$(tr -d '\n' < "$2" | sed 's/ //g')
+
+    if [[ "$trimmed_content_a" != *"$trimmed_content_b"* ]]; then
+        log_err "siteb_is_in_sitea: $2 was not $1"
+        return 1
+    fi
+
+    return 0
+}
+
 test_site(){
     html_file="$1"
 
-    trim_command="tr -d 'n' | sed 's/ //g'"
-    trimmed_content_a=$(cat "$final_dir/$html_file" | $trim_command 2>/dev/null)
-    trimmed_content_b=$(cat "pages/$html_file" | $trim_command 2>/dev/null)
+    siteb_is_in_sitea "$final_dir/$html_file" "pages/$html_file"
+    siteb_is_in_sitea "$final_dir/$html_file" "common/footer.html"
 
-    if [[ "$trimmed_content_a" != *"$trimmed_content_b"* ]]; then
-        >&2 echo "$1 was not correct build!"
-    fi
+    # TODO most of them, contain "template" strings that are filled with the real value in the final page
+    #siteb_is_in_sitea "$final_dir/$html_file" "common/head.html"
+    #siteb_is_in_sitea "$final_dir/$html_file" "common/mid.html"
+    #siteb_is_in_sitea "$final_dir/$html_file" "common/upper.html"
 }
 
 parse_blog_entry_line(){
@@ -70,9 +99,9 @@ EOF
     else 
         parsed_blog_entries=$(cat << EOF
     $parsed_blog_entries
-    <par>    
-    $line   
-    </par>  
+    <par>
+    $line
+    </par>
 EOF
         )
     fi   
@@ -117,7 +146,7 @@ $parsed_blog_entries
     sed '/pleaseinsertcontenthere/{
             s/pleaseinsertcontenthere//g
             r pages/blog.html
-        }' pages/blogv2raw.html > pages/blogv2.html
+        }' pages/blograw.html > pages/blog.html
 }
 
 create_final_page(){
@@ -134,12 +163,12 @@ create_final_page(){
 final_dir=".." 
 testing_final_dir="$final_dir/testdir"
 index_site="publications.html"
-all_sites=("404" "impressum" "publications" "skills" "blogv2") #Intentionally missing: "blog"
+all_sites=("404" "impressum" "publications" "skills" "blog") #Intentionally missing: "blog"
 cssfile="resources/style.css"
 faviconico="resources/favicon.ico"
 profilepic="resources/profile.png"
 
-bloglink="<a href=blogv2.html>Blog</a>"
+bloglink="<a href=blog.html>Blog</a>"
 publicationlink="<a href=publications.html>Publications</a>"
 skilllink="<a href=skills.html>Skills</a>"
 pagelinks="$bloglink, $publicationlink, $skilllink" #Intentionally missing: "$bloglink, "
