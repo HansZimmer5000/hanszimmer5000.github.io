@@ -83,31 +83,6 @@ test_site(){
     siteb_is_in_sitea "$final_dir/$html_file" "pages/$html_file"
     siteb_is_in_sitea "$final_dir/$html_file" "common/footer.html"
 
-    # TODO most of them, contain "template" strings that are filled with the real value in the final page
-    #siteb_is_in_sitea "$final_dir/$html_file" "common/head.html"
-    #siteb_is_in_sitea "$final_dir/$html_file" "common/mid.html"
-    #siteb_is_in_sitea "$final_dir/$html_file" "common/upper.html"
-}
-
-parse_blog_entry_line(){
-    if [ "$line_index" -eq 0 ]; then
-        parsed_blog_entries=$(cat << EOF
-    <h2>$line</h2>
-    <div class="articletext">
-EOF
-        )
-    else 
-        parsed_blog_entries=$(cat << EOF
-    $parsed_blog_entries
-    <par>
-    $line
-    </par>
-EOF
-        )
-    fi   
-    line_index=$((line_index+=1))
-}
-
 parse_blog_entry(){
     if [[ "$(tail -c 1 "$blog_entry_file")" != "" ]]; then
         echo "File '$blog_entry_file' without empty last line, will append it now"
@@ -138,9 +113,9 @@ EOF
     else 
         parsed_blog_entries=$(cat << EOF
     $parsed_blog_entries
-    <par>    
-    $line   
-    </par>  
+    <par>
+    $line
+    </par>
 EOF
         )
     fi   
