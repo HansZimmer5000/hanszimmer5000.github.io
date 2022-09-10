@@ -144,7 +144,7 @@ EOF
 
 create_blog_content(){
     # Build pages/blog.html
-    echo > pages/blog.html
+    echo > pages/blog_entries.html
     blog_entry_dir=pages/blog_entries
 
     for blog_entry_file in "$blog_entry_dir"/*; do
@@ -154,12 +154,11 @@ create_blog_content(){
         
         echo "<article>
 $parsed_blog_entries
-</article>" >> pages/blog.html
+</article>" >> pages/blog_entries.html
     done
-
     sed '/pleaseinsertcontenthere/{
             s/pleaseinsertcontenthere//g
-            r pages/blog.html
+            r pages/blog_entries.html
         }' pages/blograw.html > pages/blog.html
 }
 
