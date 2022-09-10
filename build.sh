@@ -82,6 +82,7 @@ test_site(){
 
     siteb_is_in_sitea "$final_dir/$html_file" "pages/$html_file"
     siteb_is_in_sitea "$final_dir/$html_file" "common/footer.html"
+}
 
 parse_blog_entry(){
     if [[ "$(tail -c 1 "$blog_entry_file")" != "" ]]; then
