@@ -106,7 +106,7 @@ parse_blog_entry_line(){
         : # Ignore first html comment 
     elif [ "$line_index" -eq 1 ]; then
         parsed_blog_entry=$(cat << EOF
-    <h2>$line</h2>
+    <h2><a href="$single_blog_entry_file">$line</a></h2>
     <div class="articletext">
 EOF
         )
@@ -160,15 +160,15 @@ parse_blog_entry(){
 }
 
 create_single_blog_entry_page(){
-    local blog_entry_file_name="$1"
+    local final_page="$1"
     local blog_entry="$2"
 
-    final_page="$final_dir/blog-$blog_entry_file_name"
     echo "$blog_entry" > tmpfile
     prepare_template "$final_page"
     fill_template_common "$final_page"
     fill_template_content "$final_page" tmpfile
     rm tmpfile
+    mv blog-*.html* ..  1>&2
 }
 
 create_blog_content(){
@@ -180,10 +180,10 @@ create_blog_content(){
 
     for blog_entry_file_without_dir in $blog_entry_file_sorted_most_current_first; do
         blog_entry_file="$blog_entry_dir/$blog_entry_file_without_dir"
-        echo "$blog_entry_file"
+        single_blog_entry_file="blog-$blog_entry_file_without_dir"
 
         parsed_blog_entry=$(parse_blog_entry)
-        create_single_blog_entry_page "$blog_entry_file_without_dir" "$parsed_blog_entry"
+        create_single_blog_entry_page "$single_blog_entry_file" "$parsed_blog_entry"
 
         echo "<article>
 $parsed_blog_entry
