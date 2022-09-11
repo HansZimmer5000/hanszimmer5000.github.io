@@ -87,38 +87,38 @@ parse_blog_entry(){
         echo "" >> "$blog_entry_file"
     fi
 
-    parsed_blog_entries=""
+    parsed_blog_entry=""
     line_index=0
     while IFS= read -r line; do
         parse_blog_entry_line
     done < "$blog_entry_file"
         
-    parsed_blog_entries=$(cat << EOF
-    $parsed_blog_entries
+    parsed_blog_entry=$(cat << EOF
+    $parsed_blog_entry
     </div>
 EOF
     )
-    echo "$parsed_blog_entries"
+    echo "$parsed_blog_entry"
 }
 
 parse_blog_entry_line(){
     if [ "$line_index" -eq 0 ]; then
         : # Ignore first html comment 
     elif [ "$line_index" -eq 1 ]; then
-        parsed_blog_entries=$(cat << EOF
+        parsed_blog_entry=$(cat << EOF
     <h2>$line</h2>
     <div class="articletext">
 EOF
         )
     elif [ "$line_index" -eq "$last_line_index" ]; then
-        parsed_blog_entries=$(cat << EOF
-$parsed_blog_entries
+        parsed_blog_entry=$(cat << EOF
+$parsed_blog_entry
 </div>
 EOF
         )
     else 
-        parsed_blog_entries=$(cat << EOF
-    $parsed_blog_entries
+        parsed_blog_entry=$(cat << EOF
+    $parsed_blog_entry
     <par>
     $line
     </par>
@@ -133,7 +133,7 @@ parse_blog_entry(){
         echo "" >> "$blog_entry_file"
     fi
 
-    parsed_blog_entries=""
+    parsed_blog_entry=""
     line_index=0
     line_count="$(wc -l < "$blog_entry_file" | sed 's| ||g')"
     last_line_index="$(($line_count-1))"
@@ -156,7 +156,19 @@ parse_blog_entry(){
             ;;
     esac
 
-    echo "$parsed_blog_entries"
+    echo "$parsed_blog_entry"
+}
+
+create_single_blog_entry_page(){
+    local blog_entry_file_name="$1"
+    local blog_entry="$2"
+
+    final_page="$final_dir/blog-$blog_entry_file_name"
+    echo "$blog_entry" > tmpfile
+    prepare_template "$final_page"
+    fill_template_common "$final_page"
+    fill_template_content "$final_page" tmpfile
+    rm tmpfile
 }
 
 create_blog_content(){
@@ -166,14 +178,15 @@ create_blog_content(){
     blog_entry_files="$(ls $blog_entry_dir)"
     blog_entry_file_sorted_most_current_first="$(echo "$blog_entry_files" | sort -r)"
 
-    for blog_entry_file in $blog_entry_file_sorted_most_current_first; do
-        blog_entry_file="$blog_entry_dir/$blog_entry_file"
+    for blog_entry_file_without_dir in $blog_entry_file_sorted_most_current_first; do
+        blog_entry_file="$blog_entry_dir/$blog_entry_file_without_dir"
         echo "$blog_entry_file"
 
-        parsed_blog_entries=$(parse_blog_entry)
-        
+        parsed_blog_entry=$(parse_blog_entry)
+        create_single_blog_entry_page "$blog_entry_file_without_dir" "$parsed_blog_entry"
+
         echo "<article>
-$parsed_blog_entries
+$parsed_blog_entry
 </article>" >> pages/blog_entries.html
     done
     sed '/pleaseinsertcontenthere/{
