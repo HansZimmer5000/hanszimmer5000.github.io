@@ -163,8 +163,11 @@ create_blog_content(){
     # Build pages/blog.html
     echo > pages/blog_entries.html
     blog_entry_dir=pages/blog_entries
+    blog_entry_files="$(ls $blog_entry_dir)"
+    blog_entry_file_sorted_most_current_first="$(echo "$blog_entry_files" | sort -r)"
 
-    for blog_entry_file in "$blog_entry_dir"/*; do
+    for blog_entry_file in $blog_entry_file_sorted_most_current_first; do
+        blog_entry_file="$blog_entry_dir/$blog_entry_file"
         echo "$blog_entry_file"
 
         parsed_blog_entries=$(parse_blog_entry)
