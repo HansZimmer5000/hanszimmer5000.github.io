@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<rss version="2.0">
+
+    <channel>
+    <title>hape.dev</title>
+    <link>https://hape.dev</link>
+    <description>HaPe.Dev Blog</description>
+    <item>
+        <title>Blog XYZ</title>
+        <link>https://hape.dev/blog-220910.html</link>
+        <description>A Blog Entry Description</description>
+    </item>
+    </channel>
+
+</rss>
