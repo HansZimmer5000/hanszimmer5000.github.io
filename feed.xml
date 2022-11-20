@@ -2,14 +2,15 @@
 <rss version="2.0">
 
     <channel>
-    <title>hape.dev</title>
-    <link>https://hape.dev</link>
-    <description>HaPe.Dev Blog</description>
-    <item>
-        <title>Blog XYZ</title>
-        <link>https://hape.dev/blog-220910.html</link>
-        <description>A Blog Entry Description</description>
-    </item>
+        <title>hape.dev</title>
+        <link>https://hape.dev</link>
+        <description>HaPe.Dev Blog</description>
+        <item>
+            <title>Blog XYZ</title>
+            <guid>https://hape.dev/blog-220910.html</guid>
+            <link>https://hape.dev/blog-220910.html</link>
+            <description>A Blog Entry Description</description>
+        </item>
     </channel>
 
 </rss>
