@@ -156,7 +156,7 @@ a:hover {
 
 #blogbody {
     text-align: left;
-	margin: 0 0 0 200px; /* should match nav width */
+	/* margin: 0 0 0 200px;  should match nav width */
 	max-width: 50em;
 	padding: 1.5em;
 }
