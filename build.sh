@@ -205,6 +205,26 @@ create_final_page(){
     test_site "$page.html"
 }
 
+create_rss_item(){
+    item="$(tr '\n' ' ' < feed_item.xml)"
+    item=$(echo "$item" | sed "s|itemtitel|$1|")
+    item=$(echo "$item" | sed "s|itemguid|$2|")
+    item=$(echo "$item" | sed "s|itemlink|$3|")
+    item=$(echo "$item" | sed "s|itemdesc|$4|")
+    echo "$item"
+}
+
+create_rss_feed(){
+    blog_files="$(cd "$final_dir"; ls blog-*.html)"
+    items=""
+    for blog_file in $blog_files; do
+        item=$(create_rss_item "TODO $blog_file Title" "https://hape.dev/$blog_file" "https://hape.dev/$blog_file" "TODO $blog_file Desc")
+        items="$items\n$item"
+    done
+
+    sed "s|items|$items|" feed.xml > "$final_dir/feed.xml"
+}
+
 final_dir=".." 
 testing_final_dir="$final_dir/testdir"
 index_site="publications.html"
@@ -237,6 +257,8 @@ set -e
     for page in "${all_sites[@]}"; do
         create_final_page
     done
+
+    create_rss_feed
 
     set_index $index_site
 )
