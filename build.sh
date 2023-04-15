@@ -1,5 +1,13 @@
 #!/bin/bash
 
+log(){
+    echo "$*"
+}
+
+log_err(){
+    log "$*" 1>&2
+}
+
 prepare_template(){
     cp common/template.html "$1"
 }
@@ -8,11 +16,12 @@ fill_template_common(){
     shopt -s extglob
 
     old="head.html"
-    new="$(cat common/head.html | tr '\n' ' ')"
-
-    for common in $(ls common); do
+    new="$(tr '\n' ' ' < common/head.html)"
+    common_files="$(ls common)"
+    
+    for common in $common_files; do
         old="$common"
-        new="$(cat common/$common | tr '\n' ' ')"
+        new="$(tr '\n' ' ' < common/"$common")"
         rule="""s|$old|$new|"""
         sed -i -r -e "$rule" "$1"
     done
@@ -20,10 +29,11 @@ fill_template_common(){
 
 fill_template_content(){
     old="SomeContent"
-    
-    new="$(cat $2 | tr '\n' ' ')"
+    new="$(tr '\n' ' ' < "$2")"
+    new="${new//&/\&}"
+
     echo "Content: $1 $2"
-    rule="""s|$old|$new|"""
+    rule="""s#$old#$new#"""
     sed -i -r -e "$rule" "$1"
     sed -i -r -e """s|cssfile|$cssfile|""" "$1"
     sed -i -r -e """s|faviconico|$faviconico|""" "$1"
@@ -31,92 +41,217 @@ fill_template_content(){
     sed -i -r -e """s|pagelinks|$pagelinks|""" "$1"
 }
 
-hotfix_remove_template_content(){
-    #TODO remove hotfix by directly not inserting "SomeContent" into pages. But I dont know yet how that happend.
-    sed -i -r -e 's|SomeContent ||g' "$1"
-}
-
 set_index(){
     if [[ "$1" == *".html" ]]; then
         (
-            cd "$final_dir"
+            cd "$final_dir" || return 1
             rm -f "index.html"
             ln -s "$1" "index.html"
         )
-    else 
+    else
         echo "Argument 1 must be .html file, was $1"
     fi
 }
 
-test_site(){
-    trim_command="tr -d 'n' | sed 's/ //g'"
-    if [[ "$(cat $final_dir/$1 | $trim_command 2>/dev/null)" != *"$(cat pages/$1 | $trim_command 2>/dev/null)"* ]]; then
-        >&2 echo "$1 was not correct build!"
+siteb_is_in_sitea(){
+    if ! test -f "$1"; then
+        log_err "siteb_is_in_sitea: could not find $1"
+        return 1
     fi
+    if ! test -f "$2"; then
+        log_err "siteb_is_in_sitea: could not find $2"
+        return 1
+    fi
+
+    trimmed_content_a=$(tr -d '\n' < "$1" | sed 's/ //g')
+    trimmed_content_b=$(tr -d '\n' < "$2" | sed 's/ //g')
+
+    if [[ "$trimmed_content_a" != *"$trimmed_content_b"* ]]; then
+        log_err "siteb_is_in_sitea: $2 was not $1"
+        return 1
+    fi
+
+    return 0
+}
+
+test_site(){
+    html_file="$1"
+
+    siteb_is_in_sitea "$final_dir/$html_file" "pages/$html_file" || echo "TODO fix siteb_is_in_sitea"
+    siteb_is_in_sitea "$final_dir/$html_file" "common/footer.html" || echo "TODO fix siteb_is_in_sitea"
+}
+
+parse_blog_entry(){
+    if [[ "$(tail -c 1 "$blog_entry_file")" != "" ]]; then
+        echo "File '$blog_entry_file' without empty last line, will append it now"
+        echo "" >> "$blog_entry_file"
+    fi
+
+    parsed_blog_entry=""
+    line_index=0
+    while IFS= read -r line; do
+        parse_blog_entry_line
+    done < "$blog_entry_file"
+        
+    parsed_blog_entry=$(cat << EOF
+    $parsed_blog_entry
+    </div>
+EOF
+    )
+    echo "$parsed_blog_entry"
+}
+
+parse_blog_entry_line(){
+    if [ "$line_index" -eq 0 ]; then
+        : # Ignore first html comment 
+    elif [ "$line_index" -eq 1 ]; then
+        parsed_blog_entry=$(cat << EOF
+    <h2><a href="$single_blog_entry_file">$line</a></h2>
+    <div class="articletext">
+EOF
+        )
+    elif [ "$line_index" -eq "$last_line_index" ]; then
+        parsed_blog_entry=$(cat << EOF
+$parsed_blog_entry
+</div>
+EOF
+        )
+    else 
+        parsed_blog_entry=$(cat << EOF
+    $parsed_blog_entry
+    <par>
+    $line
+    </par>
+EOF
+        )
+    fi   
+}
+
+parse_blog_entry(){
+    if [[ "$(tail -c 1 "$blog_entry_file")" != "" ]]; then
+        echo "File '$blog_entry_file' without empty last line, will append it now"
+        echo "" >> "$blog_entry_file"
+    fi
+
+    parsed_blog_entry=""
+    line_index=0
+    line_count="$(wc -l < "$blog_entry_file" | sed 's| ||g')"
+    last_line_index="$(($line_count-1))"
+
+    html_comment=$(head -n 1 "$blog_entry_file")
+    case "$html_comment" in 
+        "<!--raw-->")
+            line="$(head -n 2 "$blog_entry_file" | tail -n 1)" line_index=1 parse_blog_entry_line
+            line="$(tail -n+3 "$blog_entry_file")" line_index=2 parse_blog_entry_line
+            ;;
+        "<!--article-->")
+            while IFS= read -r line; do
+                parse_blog_entry_line
+                line_index=$((line_index+=1))
+            done < "$blog_entry_file"
+            ;;
+        *)
+            echo "No HTML comment as first line of blog entry: $blog_entry_file. Exiting" 1>&2
+            exit 1
+            ;;
+    esac
+
+    echo "$parsed_blog_entry"
+}
+
+create_single_blog_entry_page(){
+    local final_page="$1"
+    local blog_entry="$2"
+
+    echo "$blog_entry" > tmpfile
+    prepare_template "$final_page"
+    fill_template_common "$final_page"
+    fill_template_content "$final_page" tmpfile
+    rm tmpfile
+    mv blog-*.html* ..  1>&2
 }
 
 create_blog_content(){
     # Build pages/blog.html
-    echo > pages/blog.html
+    echo > pages/blog_entries.html
     blog_entry_dir=pages/blog_entries
-    for blog_entry in $(ls $blog_entry_dir); do
-        blog_entry_file="$blog_entry_dir/$blog_entry"
-        echo "$blog_entry_file"
+    blog_entry_files="$(ls $blog_entry_dir)"
+    blog_entry_file_sorted_most_current_first="$(echo "$blog_entry_files" | sort -r)"
 
-        if [[ "$(tail -c 1 "$blog_entry_file")" != "" ]]; then
-            echo "File '$blog_entry_file' without empty last line, will append it now"
-            echo "" >> "$blog_entry_file"
-        fi
+    for blog_entry_file_without_dir in $blog_entry_file_sorted_most_current_first; do
+        blog_entry_file="$blog_entry_dir/$blog_entry_file_without_dir"
+        single_blog_entry_file="blog-$blog_entry_file_without_dir"
 
-        blog_entry_parsed=""
-        line_index=0
-        while IFS= read -r line; do
+        parsed_blog_entry=$(parse_blog_entry)
+        create_single_blog_entry_page "$single_blog_entry_file" "$parsed_blog_entry"
 
-            if [ $line_index -eq 0 ]; then
-                blog_entry_parsed=$(cat << EOF
-    <h3 class="articlehead">$line</h3>
-    <div class="articletext">
-EOF
-    )
-            else 
-                blog_entry_parsed=$(cat << EOF
-    $blog_entry_parsed
-    <par>    
-    $line   
-    </par>  
-EOF
-    )
-            fi
-            
-            line_index=$((line_index+=1))
-        done < "$blog_entry_file"
-                blog_entry_parsed=$(cat << EOF
-    $blog_entry_parsed
-    </div>
-EOF
-    )
         echo "<article>
-    $blog_entry_parsed
-    </article>" >> pages/blog.html
-        echo $line_index
+$parsed_blog_entry
+</article>" >> pages/blog_entries.html
     done
+    sed '/pleaseinsertcontenthere/{
+            s/pleaseinsertcontenthere//g
+            r pages/blog_entries.html
+        }' pages/blograw.html > pages/blog.html
 }
+
+create_final_page(){
+    final_page="$final_dir/$page.html"
+
+    prepare_template "$final_page"
+    fill_template_common "$final_page"
+    fill_template_content "$final_page" "pages/$page.html"
+
+    test_site "$page.html"
+}
+
+create_rss_item(){
+    item="$(tr '\n' ' ' < feed_item.xml)"
+    item=$(echo "$item" | sed "s|itemtitel|$1|")
+    item=$(echo "$item" | sed "s|itemguid|$2|")
+    item=$(echo "$item" | sed "s|itemlink|$3|")
+    item=$(echo "$item" | sed "s|itemdesc|$4|")
+    echo "$item"
+}
+
+get_blogtitle_from_finalblogfile(){
+    h2=$(xmllint --html --xpath '/html/body/h2[1]' "$1" 2>/dev/null)
+
+    title_raw=$(echo "$h2" | cut -d">" -f 3)
+    title_clean=$(echo "$title_raw" | cut -d"<" -f 1)
+    echo "$title_clean"
+}
+
+create_rss_feed(){
+    blog_files="$(cd "$final_dir"; ls blog-*.html)"
+    items=""
+    for blog_file in $blog_files; do
+        title=$(get_blogtitle_from_finalblogfile "$final_dir/"$(echo "$blog_file"))
+        description="tbd"
+        item=$(create_rss_item "$title" "https://hape.dev/$blog_file" "https://hape.dev/$blog_file" "$description")
+        items="$items\n$item"
+    done
+
+    sed "s|items|$items|" feed.xml > "$final_dir/feed.xml"
+}
+
+final_dir=".." 
+testing_final_dir="$final_dir/testdir"
+index_site="publications.html"
+all_sites=("404" "impressum" "publications" "skills" "blog") #Intentionally missing: "blog"
+cssfile="resources/style.css"
+faviconico="resources/favicon.ico"
+profilepic="resources/profile.png"
+
+bloglink="<a href=blog.html>Blog</a>"
+publicationlink="<a href=publications.html>Publications</a>"
+skilllink="<a href=skills.html>Skills</a>"
+pagelinks="$bloglink, $publicationlink, $skilllink" #Intentionally missing: "$bloglink, "
+
+set -e
 
 (
     cd pieces || exit 1
-
-    final_dir=".." 
-    testing_final_dir="$final_dir/testdir"
-    index_site="publications.html"
-    all_sites=("404" "impressum" "publications" "skills") #Intentionally missing: "blog"
-    cssfile="resources/style.css"
-    faviconico="resources/favicon.ico"
-    profilepic="resources/profile.png"
-
-    bloglink="<a href=blog.html>Blog</a>"
-    publicationlink="<a href=publications.html>Publications</a>"
-    skilllink="<a href=skills.html>Skills</a>"
-    pagelinks="$publicationlink, $skilllink" #Intentionally missing: "$bloglink, "
 
     if [ "$1" = "-t" ]; then
         mkdir -p "$testing_final_dir"
@@ -129,20 +264,14 @@ EOF
 
     create_blog_content
 
-    for page in ${all_sites[@]}; do
-        final_page="$final_dir/$page.html"
-
-        prepare_template "$final_page"
-        fill_template_common "$final_page"
-        fill_template_content "$final_page" "pages/$page.html"
-        hotfix_remove_template_content "$final_page"
-
-        test_site "$page.html"
+    for page in "${all_sites[@]}"; do
+        create_final_page
     done
+
+    create_rss_feed
 
     set_index $index_site
 )
 
-
-# TODO for some reason BSD sed (MacOS) creates "${page}.html-r" files. Think some arguments are differently used from Linux / BSD
-rm -f *.html-r
+# TODO for some reason BSD 'sed' (MacOS) creates "${page}.html-r" files. Think some arguments are differently used from Linux to BSD
+rm -f ./*.html-r ./testdir/*.html-r
