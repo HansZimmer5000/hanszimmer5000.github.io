@@ -7,8 +7,8 @@
         <description>HaPe.Dev Blog</description>
         <atom:link href="https://hape.dev/feed.xml" rel="self" type="application/rss+xml" />
         
-<item>     <title>TODO blog-191224.html Title</title>     <guid>https://hape.dev/blog-191224.html</guid>     <link>https://hape.dev/blog-191224.html</link>     <description>TODO blog-191224.html Desc</description> </item> 
-<item>     <title>TODO blog-220910.html Title</title>     <guid>https://hape.dev/blog-220910.html</guid>     <link>https://hape.dev/blog-220910.html</link>     <description>TODO blog-220910.html Desc</description> </item> 
+<item>     <title>24. Dec 19 - Building this Website</title>     <guid>https://hape.dev/blog-191224.html</guid>     <link>https://hape.dev/blog-191224.html</link>     <description>tbd</description> </item> 
+<item>     <title>10. Sep 22 - Farming Simulator Equipment Efficiency Calculator</title>     <guid>https://hape.dev/blog-220910.html</guid>     <link>https://hape.dev/blog-220910.html</link>     <description>tbd</description> </item> 
     </channel>
 
 </rss>
