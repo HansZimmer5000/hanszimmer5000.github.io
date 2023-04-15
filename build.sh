@@ -142,7 +142,7 @@ parse_blog_entry(){
     case "$html_comment" in 
         "<!--raw-->")
             line="$(head -n 2 "$blog_entry_file" | tail -n 1)" line_index=1 parse_blog_entry_line
-            line="$(tail -n+2 "$blog_entry_file")" line_index=2 parse_blog_entry_line
+            line="$(tail -n+3 "$blog_entry_file")" line_index=2 parse_blog_entry_line
             ;;
         "<!--article-->")
             while IFS= read -r line; do
@@ -214,11 +214,21 @@ create_rss_item(){
     echo "$item"
 }
 
+get_blogtitle_from_finalblogfile(){
+    h2=$(xmllint --html --xpath '/html/body/h2[1]' "$1" 2>/dev/null)
+
+    title_raw=$(echo "$h2" | cut -d">" -f 3)
+    title_clean=$(echo "$title_raw" | cut -d"<" -f 1)
+    echo "$title_clean"
+}
+
 create_rss_feed(){
     blog_files="$(cd "$final_dir"; ls blog-*.html)"
     items=""
     for blog_file in $blog_files; do
-        item=$(create_rss_item "TODO $blog_file Title" "https://hape.dev/$blog_file" "https://hape.dev/$blog_file" "TODO $blog_file Desc")
+        title=$(get_blogtitle_from_finalblogfile "$final_dir/"$(echo "$blog_file"))
+        description="tbd"
+        item=$(create_rss_item "$title" "https://hape.dev/$blog_file" "https://hape.dev/$blog_file" "$description")
         items="$items\n$item"
     done
 
