@@ -29,7 +29,9 @@ fill_template_common(){
 
 fill_template_content(){
     old="SomeContent"
-    new="$(tr '\n' ' ' < "$2")"
+    new="$2"
+    new="$(tr '\n' ' ' < "$new")"
+    new="${new//\#/\\#}"
     new="${new//&/\&}"
 
     echo "Content: $1 $2"
@@ -145,6 +147,7 @@ parse_blog_entry(){
             line="$(tail -n+3 "$blog_entry_file")" line_index=2 parse_blog_entry_line
             ;;
         "<!--article-->")
+            # TODO somehow two empty lines are needed at the end  for last line to be shown.
             while IFS= read -r line; do
                 parse_blog_entry_line
                 line_index=$((line_index+=1))
