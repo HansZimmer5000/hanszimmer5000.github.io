@@ -10,6 +10,7 @@ This folder contains following html files:
 - `resources/`: Contains additional resources
   - `style.css`
   - `favicon.ico`: Icon used in browser tab
+  - `blog/`: Files used in blog entries
 - `pages/`: Contains the page contents
   - `skills.html`
   - `publications.html`
