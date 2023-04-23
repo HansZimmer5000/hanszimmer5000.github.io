@@ -6,6 +6,7 @@ I tried it out recently to create a tail recursive script in bash to get somethi
 So, I initially asked:
 <code>Can you write a tail recursive bash script for me, that flattens a JSON list that may contain JSON lists</code>
 <br>
+In the end I wanted to get a script, that reads through a JSON list. If an JSON object contains a certain key and value, it should go into recursion. Otherwise, extract certain values. As the nested lists may contain the same JSON object (and so id) multiple times, only the first time should it be looked at, to save time and duplicates in the final result.
 <br>
 Slowly but surely getting to the script I wanted to have: <a href="pieces/resources/blog/scriptv1.sh">Script V1</a>
 <br>
@@ -31,7 +32,7 @@ At first glance, great! I especially like the comments it put into the script. H
         <tr>
             <td>7</td>
             <td>Must</td>
-            <td>Variable "ids" is set, but never used in returned or anything for further use</td>
+            <td>Variable "ids" is set, but never used nor returned. This is important, because this variable represents the ids that were already looked at.</td>
             <td>Return the "ids" variable, which is easier said than done. Like in Python, <a href="https://de.wiktionary.org/wiki/babyeierleicht">babyeierleicht</a>", you just return two values. This is way harder with Bash as bash only can return text and only one value. What can be done is to return a JSON object that contains the "result" variable and the "ids" variable. Which then gets parsed again one level higher to make use of the values. If you think you can also implement that via a global bash variable: nope, as subshells cannot change variable from parent shells</td>
         </tr>
         <tr>
