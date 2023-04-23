@@ -1,0 +1,102 @@
+2a3,6
+> log(){
+>   test "$verbose" = "true" && echo "$(date): $*" 1>&2
+> }
+> 
+4,7c8,13
+< function flatten_json_list {
+<   local result=$1
+<   local item=$2
+<   local ids=()
+---
+> flatten_json_list(){
+>   flatten_json_list_ "{
+>     \"ids\": [],
+>     \"result\": []
+>   }" "$1" | jq -c .
+> }
+9c15,27
+<   if [[ $(echo "${item}" | jq 'type') == "array" ]]; then
+---
+> flatten_json_list_() {
+>   local input result item ids
+> 
+>   input="$1"
+>   ids=$(echo "$input" | jq .ids)
+>   result=$(echo "$input" | jq .result)
+>   item="$2"
+> 
+>   log "input = $(echo "$1" | jq -c .))"
+> 
+>   log "item: $item"
+>   if [ "$(echo "${item}" | jq 'type=="array"')" = "true" ]; then
+>     local tmp_output tmp_ids tmp_result
+12c30,37
+<       result=$(flatten_json_list "${result}" "${subitem}")
+---
+>       log "array: $subitem"
+>       tmp_output=$(flatten_json_list_ "$input" "$subitem")
+>       tmp_ids=$(echo "$tmp_output" | jq .ids)
+>       tmp_result=$(echo "$tmp_output" | jq .result)
+>       input="{
+>         \"ids\": $(echo "${ids}" | jq -c ". + $tmp_ids"),
+>         \"result\": $(echo "${result}" | jq -c ". + $tmp_result")
+>       }"
+13a39,40
+>     ids=$(echo "$input" | jq .ids)
+>     result=$(echo "$input" | jq .result)
+16c43,44
+<     if [[ $(echo "${item}" | jq 'type') == "object" && $(echo "${item}" | jq '.type' | grep -q -E '[^[:space:]]') && $(echo "${item}" | jq '.id' | grep -q -E '^[0-9]+$') ]]; then
+---
+>     if [[ "$(echo "${item}" | jq 'type=="object"')" = "true" && $(echo "${item}" | jq '.type==null') == "false" && $(echo "${item}" | jq '.id==null') == "false" ]]; then
+>       log "json object"
+18,19c46,50
+<       local id=$(echo "${item}" | jq '.id')
+<       if ! echo "${ids[@]}" | grep -q -w "${id}"; then
+---
+>       local id type
+>       id=$(echo "${item}" | jq -r '.id')
+>       type=$(echo "${item}" | jq -r '.type')
+>       log "unknown id $id: $(echo "$ids" | jq -c .)"
+>       if [ "$(echo "$ids" | jq ". | index(\"$id\") == null")" = true ]; then
+21,22c52,55
+<         result=$(echo "${result}" | jq ". + [$(echo "${item}" | jq '.type')]")
+<         ids+=("${id}")
+---
+>         log "result: $result: $type"
+>         result=$(echo "${result}" | jq -c ". + [\"$type\"]")
+>         ids=$(echo "${ids}" | jq -c ". + [\"$id\"]")
+>         log "ids end = $(echo "$ids" | jq -c .)"
+26,27c59,63
+< 
+<   echo "${result}"
+---
+>   output="{
+>     \"ids\": $ids,
+>     \"result\": $result
+>   }"
+>   echo "$output"
+30,31c66
+< # Read in the JSON list from stdin
+< json_list=$(cat)
+---
+> verbose="false"
+32a68,76
+> # Read in the JSON list from first positional argument or stdin (thanks to https://stackoverflow.com/a/2456870)
+> if [ -t 0 ]; then
+>     # ./cgpt.sh '[{"type": "abc", "id": 3}, {"type": "xyz", "id":3}, {"type": "def", "id": 0}]'
+>     json_list=${1:?insert json}
+> else
+>     # echo '[{"type": "abc", "id": 3}, {"type": "xyz", "id":3}, {"type": "def", "id": 0}]' | ./cgpt.sh 
+>     json_list=$(cat)
+> fi
+> 
+34c78
+< final_result=$(flatten_json_list "[]" "${json_list}")
+---
+> final_result=$(flatten_json_list "${json_list}")
+37c81
+< echo "${final_result}"
+\ No newline at end of file
+---
+> echo "$final_result"

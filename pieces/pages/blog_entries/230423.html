@@ -1,0 +1,67 @@
+<!--article-->
+23. Apr 23 - ChatGPT with Bash
+ChatGPT does not need an introduction at this point.
+I tried it out recently to create a tail recursive script in bash to get something for me from the Azure Portal. So, I thought maybe ChatGPT can help with providing the close-to-final code directly. Saving me some time.
+<br>
+So, I initially asked:
+<code>Can you write a tail recursive bash script for me, that flattens a JSON list that may contain JSON lists</code>
+<br>
+<br>
+Slowly but surely getting to the script I wanted to have: <a href="pieces/resources/blog/scriptv1.sh">Script V1</a>
+<br>
+At first glance, great! I especially like the comments it put into the script. However, at a closer look certain parts are weird:
+<br>
+<br>
+<table style="padding: 10px">
+    <thead>
+        <tr>
+            <th>Line No.</th>
+            <th><a href="https://en.wikipedia.org/wiki/MoSCoW_method">Criticality</a></th>
+            <th>What I find weird</th>
+            <th>How I would address it</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>4</td>
+            <td>Nice</td>
+            <td>Use of "function <name>" instead of "<name>()"</td>
+            <td>Personal preference. Fyi: "()" is POSIX, see also <a href="https://www.gnu.org/software/bash/manual/html_node/Shell-Functions.html">GNU Documentation</a> and <a href="https://google.github.io/styleguide/shellguide.html#naming-conventions">Googles StyleSheet</a></td>
+        </tr>
+        <tr>
+            <td>7</td>
+            <td>Must</td>
+            <td>Variable "ids" is set, but never used in returned or anything for further use</td>
+            <td>Return the "ids" variable, which is easier said than done. Like in Python, <a href="https://de.wiktionary.org/wiki/babyeierleicht">babyeierleicht</a>", you just return two values. This is way harder with Bash as bash only can return text and only one value. What can be done is to return a JSON object that contains the "result" variable and the "ids" variable. Which then gets parsed again one level higher to make use of the values. If you think you can also implement that via a global bash variable: nope, as subshells cannot change variable from parent shells</td>
+        </tr>
+        <tr>
+            <td>9,16</td>
+            <td>Must</td>
+            <td>The '== "object"' and '=="array"' checks always fails</td>
+            <td>Why this is I am not sure. However, one can make use of jq features to check for certain values: jq 'type=="array"</td>
+        </tr>
+        <tr>
+            <td>16</td>
+            <td>Should</td>
+            <td>If clause is overall hard to read / understand due to so many things happening in one line</td>
+            <td>Fix is two folds. One is to replace the grep with a jq null check: jq '.type==null'. The other one is to split the evaluations up, e.g. into their own each variable that is evaluated before the if. The if then "only" combines the values</td>
+        </tr>
+        <tr>
+            <td>31</td>
+            <td>Should</td>
+            <td>If input is not given via stdin, cat will block the terminal</td>
+            <td>Replace simple cat with small logic to check if stdin exists or not. If it exists, use it, otherwise try to get input via positional argument(s)</td>
+        </tr>
+        <tr>
+            <td>34</td>
+            <td>Nice (Nit-picky)</td>
+            <td>User of function must always provide the list of known ids. In most cases, probably empty.</td>
+            <td>Have a function before the "real" recursive one, to set the default values.</td>
+        </tr>
+    </tbody>
+</table>
+<br>
+In the end I ended up with <a href="pieces/resources/blog/scriptv2.sh">this script</a>, fully working as intended. See <a href="pieces/resources/blog/scriptv1v2.diff">here the diff</a> of the two files.
+<br>
+As a conclusion, ChatGPT with this first test was very good at giving a general idea / structure to solve a problem. However, Bash knowledge is essential to make the script work, and to make sure the script is readable / understandable.
+
