@@ -134,6 +134,12 @@ a:hover {
     text-align: left;
 }
 
+.blogtable td {
+    padding: 10px;
+    border-top: 1px solid;
+    text-align: left;
+}
+
 #nav {
     text-align: left;
 	float: left;

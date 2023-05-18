@@ -8,12 +8,12 @@ So, I initially asked:
 <br>
 In the end I wanted to get a script, that reads through a JSON list. If an JSON object contains a certain key and value, it should go into recursion. Otherwise, extract certain values. As the nested lists may contain the same JSON object (and so id) multiple times, only the first time should it be looked at, to save time and duplicates in the final result.
 <br>
-After more prompts, I slowly but surely got ChatGPT to generate the following script: <a href="pieces/resources/blog/scriptv1.sh">Script V1</a>
+After more prompts, I slowly but surely got ChatGPT to generate the following script: <a href="pieces/resources/blog/scriptv1.sh">scriptv1.sh</a>
 <br>
 At first glance, great! I especially like the comments it put into the script. However, at a closer look certain parts are weird:
 <br>
 <br>
-<table style="padding: 10px">
+<table class="blogtable">
     <thead>
         <tr>
             <th>Line No.</th>
@@ -26,8 +26,8 @@ At first glance, great! I especially like the comments it put into the script. H
         <tr>
             <td>4</td>
             <td>Nice</td>
-            <td>Use of "function &lt;name&gt;" instead of "&lt;name&gt;()"</td>
-            <td>Personal preference. Fyi: "()" is POSIX, see also <a href="https://www.gnu.org/software/bash/manual/html_node/Shell-Functions.html">GNU Documentation</a> and <a href="https://google.github.io/styleguide/shellguide.html#naming-conventions">Googles StyleSheet</a></td>
+            <td><p>Use of "function &lt;name&gt;" instead of "&lt;name&gt;()", e.g:<pre>function flatten_json_list {</pre></td>
+            <td>Personal preference. Fyi: "()" is POSIX, see also <a href="https://www.gnu.org/software/bash/manual/html_node/Shell-Functions.html">GNU Documentation</a> and <a href="https://google.github.io/styleguide/shellguide.html#naming-conventions">Googles StyleSheet</a>. For example:<pre>flatten_json_list()</pre></td>
         </tr>
         <tr>
             <td>7</td>
@@ -38,31 +38,34 @@ At first glance, great! I especially like the comments it put into the script. H
         <tr>
             <td>9,16</td>
             <td>Must</td>
-            <td>The '== "object"' and '=="array"' checks always fail</td>
-            <td>Why this is I am not sure. However, one can make use of <a href="https://stedolan.github.io/jq/">jq</a> features to check for certain values: jq 'type=="array"</td>
+            <td>The '== "object"' and '=="array"' checks always fail. For Example:<pre>$(echo "${item}" | jq 'type') == "object"</pre></td>
+            <td>Why this is I am not sure. However, one can make use of <a href="https://stedolan.github.io/jq/">jq</a> features to check for certain values: jq 'type=="array". For Example:<pre>"$(echo "${item}" | jq 'type=="object"')" = "true"</pre></td>
         </tr>
         <tr>
             <td>16</td>
             <td>Should</td>
-            <td>If clause is overall hard to read / understand due to so many things happening in one line</td>
-            <td>Fix is two folds. One is to replace the grep with a jq null check: jq '.type==null'. The other one is to split the evaluations up, e.g. into their own each variable that is evaluated before the if. The if then "only" combines the values</td>
+            <td>If clause is overall hard to read / understand due to so many things happening in one line:<pre>if [[<br>  $(echo "${item}" | jq 'type') == "object" &&<br>  $(echo "${item}" | jq '.type' | grep -q -E '[^[:space:]]') &&<br>  $(echo "${item}" | jq '.id' | grep -q -E '^[0-9]+$')<br>]]; then</pre></td>
+            <td>Fix is two folds. One is to replace the grep with a jq null check: jq '.type==null'. The other one is to split the evaluations up. For Example into their own each variable that is evaluated before the if. The if then "only" combines the values. <pre>if [[<br>  "$(echo "${item}" | jq 'type=="object"')" = "true" &&<br>  $(echo "${item}" | jq '.type==null') == "false" &&<br>  $(echo "${item}" | jq '.id==null') == "false"<br>]]; then</pre></td>
         </tr>
         <tr>
             <td>31</td>
             <td>Should</td>
             <td>If input is not given via stdin, cat will block the terminal</td>
-            <td>Replace simple cat with small logic to check if stdin exists or not. If it exists, use it, otherwise try to get input via positional argument(s)</td>
+            <td>Replace simple cat with small logic to check if stdin exists or not. If it exists, use it, otherwise try to get input via positional argument(s). For example:<pre>if [ -t 0 ];<br>  then json_list=${1:?insert json}<br>  else json_list=$(cat)<br>fi</pre></td>
         </tr>
         <tr>
             <td>34</td>
             <td>Nice (Nit-picky)</td>
-            <td>User of function must always provide the list of known ids. In most cases, probably empty.</td>
-            <td>Have a function before the "real" recursive one, to set the default values.</td>
+            <td>Not possible to provide initial set of known ids. Ids are initially always empty: <pre>local ids=()</pre></td>
+            <td>Have a function before the "real" recursive one, to set a default or the given ones. For example:<pre>flatten_json_list(){<br>  flatten_json_list_ "{\"ids\": [],\"result\": []}" "$1"<br>}<br>flatten_json_list "&lt;already known ids from user input&gt;"</pre></td>
         </tr>
     </tbody>
 </table>
 <br>
-After I implemented these and other small improvements, my final script is <a href="pieces/resources/blog/scriptv2.sh">Script V2</a>, fully working as intended. See <a href="pieces/resources/blog/scriptv1v2.diff">here the diff</a> of the two files.
+After I implemented these and other small improvements, my final script is <a href="pieces/resources/blog/scriptv2.sh">scriptv2.sh</a>, fully working as intended. See <a href="pieces/resources/blog/scriptv1v2.diff">here the diff</a> of the two files.
 <br>
 As a conclusion, ChatGPT with this first test was very good at giving a general idea / structure to solve a problem. However, Bash knowledge is essential to make the script work, and to make sure the script is readable / understandable.
+<br>
+<br>
+Updated on 18. May with specific examples from the scripts and table horizontal lines.
 

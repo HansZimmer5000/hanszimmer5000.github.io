@@ -67,10 +67,10 @@ verbose="false"
 
 # Read in the JSON list from first positional argument or stdin (thanks to https://stackoverflow.com/a/2456870)
 if [ -t 0 ]; then
-    # ./cgpt.sh '[{"type": "abc", "id": 3}, {"type": "xyz", "id":3}, {"type": "def", "id": 0}]'
+    # ./scriptv2.sh '[{"type": "abc", "id": 3}, {"type": "xyz", "id":3}, {"type": "def", "id": 0}]'
     json_list=${1:?insert json}
 else
-    # echo '[{"type": "abc", "id": 3}, {"type": "xyz", "id":3}, {"type": "def", "id": 0}]' | ./cgpt.sh 
+    # echo '[{"type": "abc", "id": 3}, {"type": "xyz", "id":3}, {"type": "def", "id": 0}]' | ./scriptv2.sh 
     json_list=$(cat)
 fi
 
