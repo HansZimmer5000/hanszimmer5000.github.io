@@ -166,7 +166,7 @@ create_single_blog_entry_page(){
     local final_page="$1"
     local blog_entry="$2"
 
-    echo "$blog_entry" > tmpfile
+    echo "<div id=\"blogbody\">$blog_entry</div>" > tmpfile
     prepare_template "$final_page"
     fill_template_common "$final_page"
     fill_template_content "$final_page" tmpfile
@@ -218,7 +218,7 @@ create_rss_item(){
 }
 
 get_blogtitle_from_finalblogfile(){
-    h2=$(xmllint --html --xpath '/html/body/h2[1]' "$1" 2>/dev/null)
+    h2=$(xmllint --html --xpath '/html/body/div/h2[1]' "$1" 2>/dev/null)
 
     title_raw=$(echo "$h2" | cut -d">" -f 3)
     title_clean=$(echo "$title_raw" | cut -d"<" -f 1)
