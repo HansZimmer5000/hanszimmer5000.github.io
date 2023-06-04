@@ -7,9 +7,11 @@
         <description>HaPe.Dev Blog</description>
         <atom:link href="https://hape.dev/feed.xml" rel="self" type="application/rss+xml" />
         
+<item>     <title>04. Jun 23 - Email Signature Banner</title>     <guid>https://hape.dev/blog-040623.html</guid>     <link>https://hape.dev/blog-040623.html</link>     <description>tbd</description> </item> 
 <item>     <title>24. Dec 19 - Building this Website</title>     <guid>https://hape.dev/blog-191224.html</guid>     <link>https://hape.dev/blog-191224.html</link>     <description>tbd</description> </item> 
 <item>     <title>15. Apr 23 - Farming Simulator Equipment Efficiency Calculator</title>     <guid>https://hape.dev/blog-220910.html</guid>     <link>https://hape.dev/blog-220910.html</link>     <description>tbd</description> </item> 
 <item>     <title>23. Apr 23 - ChatGPT with Bash</title>     <guid>https://hape.dev/blog-230423.html</guid>     <link>https://hape.dev/blog-230423.html</link>     <description>tbd</description> </item> 
+<item>     <title>04. Jun 23 - Email Signature Banner</title>     <guid>https://hape.dev/blog-230604.html</guid>     <link>https://hape.dev/blog-230604.html</link>     <description>tbd</description> </item> 
     </channel>
 
 </rss>

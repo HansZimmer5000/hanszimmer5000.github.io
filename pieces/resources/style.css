@@ -139,6 +139,11 @@ a:hover {
     border-top: 1px solid;
 }
 
+.blogpicture {
+    width: 600px;
+    overflow: hidden;
+}
+
 #nav {
     text-align: left;
 	float: left;

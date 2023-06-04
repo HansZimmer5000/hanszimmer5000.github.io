@@ -1,0 +1,27 @@
+<!--article-->
+04. Jun 23 - Email Signature Banner
+A colleague once created very handy signature banners, stating the usual info like name, role and email. Back then, proprietary software was used, probably something along the lines of Photoshop. Today I thought to myself, if it is possible to create the banners also via OSS to automate and enable less restricted access to the creation of the banners.<br>
+The language to use was quite clear from the start. The PoC nature of this project screams "PYTHON!". To help with the image creation, I swiftly found <a href=https://python-pillow.org/>Pillow</a>. After a bit of searching around, looking through documentation and multiple Stack Overflow messages, I ended up with:<br>
+<br>
+<img class="blogpicture" src="pieces/resources/blog/pillow.png" alt="Signature, created with Pillow"><br>
+<br>
+Creating the script was pretty straight forward. Overall, it took only 1.5 hours. And additionally to speed, the quality also fits, the resulting image is pretty close to the original. To make it even closer, and to make it ready for different names and role names, small changes are left to do. Note that the image shown above is an example.<br>
+<br>
+Regarding the code, take a look at my <a href="pieces/resources/blog/pillow_script.py">python script</a>. I do not think that the usage of Pillow needs explanation, so the following notes will cover more general elements:<br>
+<br>
+- Must know to run the script:
+<ul>
+    <li>With the current script, a local TTF file is needed to provide the font. On MacOS I could extract the TTF file from the already installed "Font Book" application.</li>
+</ul>
+- Should know to adjust the script:
+<ul>
+    <li>To get the RGB colours, I used the already installed "Digital Colour Meter" application. Take the output with a grain of salt. In my case the values shown were 2 to 20 below the actual RGB values, and even with that in mind the colour was not exactly the same. However, it was close enough.</li>
+    <li>The script is logically split in four parts. First, the constants are defined, to make it easy for adjustments. After that, the left and right images are created. This separat creation is intended to enable easier changes to content and style. At last, the images are put together.</li>
+    <li>I didn't instantly find a native function to align the text to the right side (e.g. for first name). So, a simple calculation was implemented to get the desired X-axis value: <code>(image width) - (text length) - (padding)</code>. Subtracting the padding is used to have some space between the image right border and the last character.</li>
+</ul>
+- Nice to know:
+<ul>
+    <li>Due to the ad hoc "let's try this one" nature, I didn't put much emphasis on readability of the code (e.g. everything in one function, different ways of defining values). In case it is used at work, the readability is probably the first task I would tackle to make sure other colleagues can also maintain / adjust it.</li>
+</ul>
+To conclude, Pillow was good fun and lead to a usable and flexible result quickly. I highly recommend it for similar use cases. I already have another use case in mind for which Pillow could be useful, let's see.
+
