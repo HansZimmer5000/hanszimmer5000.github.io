@@ -248,8 +248,8 @@ profilepic="resources/profile.png"
 
 bloglink="<a href=blog.html>Blog</a>"
 publicationlink="<a href=publications.html>Publications</a>"
-skilllink="<a href=skills.html>Skills</a>"
-pagelinks="$bloglink, $publicationlink, $skilllink" #Intentionally missing: "$bloglink, "
+#skilllink="<a href=skills.html>Skills</a>"
+pagelinks="$bloglink, $publicationlink" #, $skilllink" #Intentionally missing: "$bloglink, "
 
 set -e
 
