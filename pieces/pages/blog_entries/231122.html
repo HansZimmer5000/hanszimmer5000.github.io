@@ -1,0 +1,25 @@
+<!--article-->
+22. Nov 23 - CoPilot
+
+Write a comment what you want to achieve, go to the next line and wait for the suggestion(s). Always good for at least an idea, maybe more.
+Would always use it for the tasks when to read or write files.  When I need an idea how to solve something. When I want to try out a new library with basic tasks.
+When in flow, I usually already know what needs to be done and do not need input. In that case I only rarely used CoPilot. During that phase there is a risk that CoPilot hinders the flow.
+Will miss it. Would like to continue with it. Greatly enjoyed it. It helped us tremendously in a big 18h coding session.
+
+oh nice one. Haben gerade CoPilot Testphase bei uns
+Und habe gerade den case, das je nach AZ CLI "command group" anderen parameter einfügen. muss (e.g. az ad group show --group "" / az ad user show --id "")<br>
+habe einfach "paramter='--id'" eingegeben und CoPilot hat mir direkt den "test" case vorgeschlagen um es bei einer group zu "--group" zu machen<br>
+<br>
+<pre>test "$objectIdType" == "group" && parameter="--group"</pre>
+
+Also, suggested
+echo "Trying to get user, app or sp with objectId $objectId"
+
+Also correctly suggested  for a function that echos if "debug" is true
+test "$debug" == "true" && echo "$@"
+
+However, in an existing JSON it only suggested something when typing in "kv" (for kv name) and suggested correctly, but with false syntax (missing \" to surround key)
+kv_name:\"$keyvault_name\",
+
+Suggested nicely based on <pre>policies="$(az keyvault show -n "$keyvault_name" | jq -Mr .properties.accessPolicies)"</pre> and typing "test" in next line
+test "$?" != "0" && echo "Error getting accessPolicies for keyvault $keyvault_name" && exit 1
